@@ -134,7 +134,8 @@ public class MyRobot extends Robot {
                     shooterSubsystem,
                      targetAngle,
                     this,
-                    startShooter
+                    startShooter,
+                    operator::getRightX
             );
 
             CommandScheduler.getInstance().run();
@@ -431,7 +432,8 @@ public class MyRobot extends Robot {
                     shooterSubsystem,
                     targetAngle,
                     this,
-                     startShooter
+                     startShooter,
+                    operator::getRightX
             );
 
 

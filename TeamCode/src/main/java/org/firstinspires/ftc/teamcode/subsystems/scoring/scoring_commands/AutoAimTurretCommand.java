@@ -14,10 +14,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.Shooter_Subsystem;
+
+import java.util.function.DoubleSupplier;
+
 @Configurable
 public class AutoAimTurretCommand extends CommandBase {
     private MyRobot robot;
     public PIDController PID;
+    private final DoubleSupplier turretSupplier;
+    private double turretThreshold = 0;
     private final Shooter_Subsystem scoringShooterSubsystem;
     public final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     public static double height1 = 16;// height of limelight lens from the floort
@@ -62,11 +67,12 @@ public class AutoAimTurretCommand extends CommandBase {
     private GoBildaPinpointDriver odo;
 
 
-    public AutoAimTurretCommand(Shooter_Subsystem subsystem, double TargetAngle, MyRobot robot, boolean StartShooter){
+    public AutoAimTurretCommand(Shooter_Subsystem subsystem, double TargetAngle, MyRobot robot, boolean StartShooter, DoubleSupplier turretMover){
         startShooter = StartShooter;
         this.robot = robot;
         targetAngle = TargetAngle;
         scoringShooterSubsystem = subsystem;
+        turretSupplier = turretMover;
         PID = new PIDController(kp, ki, kd);
         addRequirements(scoringShooterSubsystem);
         odo = robot.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
@@ -143,10 +149,12 @@ public class AutoAimTurretCommand extends CommandBase {
         scoringShooterSubsystem.setVelocity(shooterPower);
 
         double error = turretBearing - targettx;
-        if((Math.abs(turretBearing) != 0)) {
+        if((Math.abs(turretBearing) != 0) && (turretSupplier.getAsDouble() == 0)) {
             power = PID.calculate(turretBearing, targettx);
+        } else if (turretSupplier.getAsDouble() != 0) {
+            power = -turretSupplier.getAsDouble();
         } else {
-            power = 0;
+                power = 0;
         }
 
         if ( (Math.abs(turretBearing) != 0) && (Math.abs(targetAngle - turretBearing) < turretAngleThreshold)){
