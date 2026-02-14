@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands;
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.scoring.Scoring_Gate;
-import org.firstinspires.ftc.teamcode.subsystems.scoring.Scoring_Shooter;
 
 public class MoveScoringGateCommand extends CommandBase {
     private final Scoring_Gate scoringGateSubsystem;

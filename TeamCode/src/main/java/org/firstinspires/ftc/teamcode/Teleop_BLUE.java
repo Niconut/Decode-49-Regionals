@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 
-@TeleOp(name = "BLUE", group = "AA_Drive_Code")
+@TeleOp(name = "BLUE TELEOP", group = "AA_Drive_Code")
 public class Teleop_BLUE extends CommandOpMode {
 
     @Override

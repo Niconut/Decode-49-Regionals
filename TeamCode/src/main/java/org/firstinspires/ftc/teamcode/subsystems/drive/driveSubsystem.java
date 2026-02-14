@@ -27,13 +27,6 @@ public class driveSubsystem extends SubsystemBase {
     public driveSubsystem(HardwareMap hardwareMap, Pose2d Pose2d) {
         drive = new MecanumDrive(hardwareMap,
                 new Pose2d(0,0,0));
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP
-        ));
-        imu.initialize(parameters);
-        imu.resetYaw();
     }
 
     public void setDrivePower(double leftX, double leftY, double rightX){

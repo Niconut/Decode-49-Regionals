@@ -2,20 +2,31 @@ package org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.Shooter_Subsystem;
 @Configurable
 public class AutoAimTurretCommand extends CommandBase {
+    private MyRobot robot;
     public PIDController PID;
     private final Shooter_Subsystem scoringShooterSubsystem;
     public final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+    public static double height1 = 16;// height of limelight lens from the floort
+    public static double height2 = 29.5;// height of center of apriltag to the floor
+    public static double angle1 = 0; // mounting angle of the limelight degrees back from vertical
+    public double distance = 0;
+    public double shooterPower = 0;
     private static double turretProp[] = {0, 0};
     private static double turretBearing = 0;
     private static double turretRange = 0;
+    private static double robotPos[] = {0,0,0};
     public static double kp = 0.03 ;
     public static double ki = 0.05 ;
     public static double kd = 0.0 ;
@@ -42,7 +53,16 @@ public class AutoAimTurretCommand extends CommandBase {
     private static double flywheelCurrentSpeed = 0;
     double counter = 0;
     double turretAngleThreshold = 1.50;
-    public AutoAimTurretCommand(Shooter_Subsystem subsystem, double TargetAngle){
+    public static double lowerPower = 1200;
+    public static double higherPower = 1400;
+    public static boolean startShooter = true;
+    private AnalogInput turretAnalog; // Only source of position data
+    private GoBildaPinpointDriver odo;
+
+
+    public AutoAimTurretCommand(Shooter_Subsystem subsystem, double TargetAngle, MyRobot robot, boolean StartShooter){
+        startShooter = StartShooter;
+        this.robot = robot;
         targetAngle = TargetAngle;
         scoringShooterSubsystem = subsystem;
         PID = new PIDController(kp, ki, kd);
@@ -62,8 +82,34 @@ public class AutoAimTurretCommand extends CommandBase {
         turretProp = scoringShooterSubsystem.detectAprilTag();
         turretBearing = (turretProp[0]);
         turretRange = (turretProp[1]);
-
         double targettx = targetAngle;
+
+
+        /*if ((distance <=72.9) && (distance >=60)){
+            shooterPower = 1300;
+        } else if ((distance <=59.9) && (distance >=45)){
+            shooterPower = 1200;
+        } else if ((distance <=80.5) && (distance >=73)){
+            shooterPower = 1200;
+        }else {
+            shooterPower = 0;
+        }*/
+
+
+
+        if ((Math.abs(turretRange)!= 0) && startShooter) {
+            distance = (height2 - height1) / Math.tan(Math.toRadians(angle1 + turretRange));
+            if (robot.operator.getButton(GamepadKeys.Button.DPAD_UP)) {
+                shooterPower = higherPower + (distance - 70) * ((1700.0 - 1300.0) / (124.0 - 70.0));
+            } else if (robot.operator.getButton(GamepadKeys.Button.DPAD_DOWN)){
+                shooterPower = lowerPower + (distance - 70) * ((1700.0 - 1300.0) / (124.0 - 70.0));
+            } else {
+                shooterPower = 1300 + (distance -70) * ((1700.0 - 1300.0) / (124.0 - 70.0));
+            }
+        } else if (!startShooter){
+            shooterPower = 10;
+        }
+        scoringShooterSubsystem.setVelocity(shooterPower);
 
         double error = turretBearing - targettx;
         if((Math.abs(turretBearing) != 0)) {
@@ -86,8 +132,8 @@ public class AutoAimTurretCommand extends CommandBase {
         }
 
         //kp * error;
-        scoringShooterSubsystem.turretTelemetry(turretBearing, power);
-        scoringShooterSubsystem.setPower(power);
+        scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, distance);
+        scoringShooterSubsystem.setTurretPower(power);
 
     }
 }

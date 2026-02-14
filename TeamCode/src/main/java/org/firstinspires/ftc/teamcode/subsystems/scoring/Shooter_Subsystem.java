@@ -1,13 +1,23 @@
 package org.firstinspires.ftc.teamcode.subsystems.scoring;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -16,6 +26,8 @@ public class Shooter_Subsystem extends SubsystemBase {
     //private DcMotorEx ScoringShooter;
     private MyRobot robot;
     public Telemetry telemetry;
+    public IMU imu;
+    public final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     private Servo LightRight;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
@@ -29,7 +41,20 @@ public class Shooter_Subsystem extends SubsystemBase {
 
     private double SERVO_TURRET_SAFE_MIN = 0.0;
     private double SERVO_TURRET_SAFE_MAX = 1.0;
-
+    private DcMotorEx ScoringShooter;
+    public static double SHOOT = 1300;//1425;
+    public static double NEARNEARSHOOT = 1200;
+    public static double FAR = 1625;
+    public static double UNSTUCK = -500;
+    public static double INTAKE_BACK_SPIN = -20;
+    public static double INIT = 0;
+    public static double kp = 150;
+    public static double ki = 0;
+    public static double kd = 0;
+    public static double kf = 0;
+    public static double botX = 0;
+    public static double botY = 0;
+    public static double botHeading = 0;
     public enum Team {
         RED,
         BLUE
@@ -41,6 +66,12 @@ public class Shooter_Subsystem extends SubsystemBase {
         servoTurret = robot.hardwareMap.get(CRServo.class, "ScoringTurret");    //  port 0
         servoTurret.setDirection(CRServo.Direction.REVERSE);
         LightRight = robot.hardwareMap.get(Servo.class, "LightRight");
+        ScoringShooter = robot.hardwareMap.get(DcMotorEx.class, "ScoringShooter");
+        this.ScoringShooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+        this.ScoringShooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.ScoringShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.ScoringShooter.setVelocityPIDFCoefficients(kp,ki,kd,kf);
+        this.ScoringShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         this.telemetry = robot.telemetry;
         if (team == Team.RED){
             limelight.pipelineSwitch(1);
@@ -76,18 +107,46 @@ public class Shooter_Subsystem extends SubsystemBase {
     public void closePortal(){
         visionPortal.close();
     }
-
-    public void setPower(double power) {
+    public void setTurretPower(double power) {
         servoTurret.setPower(power);
+    }
+    public void setVelocity(double vel){
+        ScoringShooter.setVelocity(vel);
+    }
+
+    public double getVelocity(){
+        return ScoringShooter.getVelocity();
     }
 
 
+    public void shooterTelemetry(){
+        telemetry.addData("Power", ScoringShooter.getVelocity());
+        telemetry.update();
+    }
 
     public void turretTelemetry(double bearing, double power){
         telemetry.addData("targetPower", power);
         telemetry.addData("targetBearing", bearing);
         telemetry.update();
     }
+
+    public void panelTelemetry(double bearing, double power, double shootingPower, double distance){
+        panelsTelemetry.addData("targetPower", power);
+        panelsTelemetry.addData("targetBearing", bearing);
+        panelsTelemetry.addData("shooterPower", shootingPower);
+        panelsTelemetry.addData("Distance", distance);
+        telemetry.addData("targetPower", power);
+        telemetry.addData("targetBearing", bearing);
+        telemetry.addData("shooterPower", shootingPower);
+        telemetry.addData("Distance", distance);
+        telemetry.update();
+        panelsTelemetry.update();
+    }
+
+    public void setShooterPID(){
+        this.ScoringShooter.setVelocityPIDFCoefficients(kp,ki,kd,kf);
+    }
+
 
 
 
@@ -99,7 +158,6 @@ public class Shooter_Subsystem extends SubsystemBase {
         else return false;
     }
     public double getCurrentPosition(){return servoTurret.getPower();}
-
 
 
     public void lightGreen(){

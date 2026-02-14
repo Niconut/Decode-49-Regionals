@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.robot;
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -30,14 +29,11 @@ import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.SlowModeCom
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Subsystem;
-import org.firstinspires.ftc.teamcode.subsystems.intake.intake_commands.SpinIndexerCommand;
 import org.firstinspires.ftc.teamcode.subsystems.intake.intake_commands.SpinIntakeSubsystemCommand;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.Scoring_Gate;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.Shooter_Subsystem;
-import org.firstinspires.ftc.teamcode.subsystems.scoring.Scoring_Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands.AutoAimTurretCommand;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands.MoveScoringGateCommand;
-import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands.SpinScoringShooterCommand;
 
 import com.bylazar.gamepad.PanelsGamepad;
 
@@ -52,7 +48,6 @@ public class MyRobot extends Robot {
 
     public driveSubsystem drive;
     public Intake_Subsystem intakeSubsystem;
-    public Scoring_Shooter scoringShooter;
     public Shooter_Subsystem shooterSubsystem;
     //public Camera_Subsystem cameraSubsystem;
     public Distance_Sensor distanceSensor;
@@ -75,10 +70,10 @@ public class MyRobot extends Robot {
     public DefaultDriveCommand defaultDriveCommand;
     public SlowModeCommand slowModeCommand;
     public AutoAimTurretCommand autoAimCommand;
-    public SpinScoringShooterCommand shooterCommand;
     public MoveScoringGateCommand gateCommand;
 
     public static ElapsedTime shooterTime;
+    public static boolean startShooter = true;
 
     public enum TeleOpModeType {
         Field, Robot
@@ -116,12 +111,11 @@ public class MyRobot extends Robot {
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
             intakeSubsystem = new Intake_Subsystem(this);
-            scoringShooter = new Scoring_Shooter(this);
             distanceSensor = new Distance_Sensor(this);
             scoringGate = new Scoring_Gate(this);
             shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.RED);
             lightIndicator = new Light_Indicator(this);
-            register(drive, intakeSubsystem, scoringShooter, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
+            register(drive, intakeSubsystem, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
 
             defaultDriveCommand = new DefaultDriveCommand(drive,
                     driver::getLeftX,
@@ -138,7 +132,9 @@ public class MyRobot extends Robot {
 
             autoAimCommand = new AutoAimTurretCommand(
                     shooterSubsystem,
-                     targetAngle
+                     targetAngle,
+                    this,
+                    startShooter
             );
 
             CommandScheduler.getInstance().run();
@@ -179,11 +175,20 @@ public class MyRobot extends Robot {
             Button shooterFar = new GamepadButton(operator, GamepadKeys.Button.Y);
             Button shooterStart = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
             Button shooterStartClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
-            Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.RIGHT_STICK_BUTTON);
+            Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
             Button shooterStartCloseClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT);
             Button sensorTele = new GamepadButton(operator, GamepadKeys.Button.BACK);
 
+
+
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
+
+            shooterStop.whenPressed(
+                    new SequentialCommandGroup(
+                            new InstantCommand(this::changeShooterState),
+                            new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
+                    )
+            );
 
             intakeFront.whileHeld(
                     new ParallelCommandGroup(
@@ -339,7 +344,7 @@ public class MyRobot extends Robot {
                             )
                     )
             );
-            shooterStart.whenPressed(
+            /*shooterStart.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
                                     new InstantCommand(()-> telemetry.clearAll()),
@@ -363,6 +368,7 @@ public class MyRobot extends Robot {
                             )
                     )
             );
+
             shooterStartCloseClose.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
@@ -384,7 +390,7 @@ public class MyRobot extends Robot {
                             ),
                             new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.INIT)
                     )
-            );
+            );*/
 
 
             sensorTele.whileHeld(
@@ -402,12 +408,11 @@ public class MyRobot extends Robot {
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
             intakeSubsystem = new Intake_Subsystem(this);
-            scoringShooter = new Scoring_Shooter(this);
             distanceSensor = new Distance_Sensor(this);
             scoringGate = new Scoring_Gate(this);
             shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.BLUE);
             lightIndicator = new Light_Indicator(this);
-            register(drive, intakeSubsystem, scoringShooter, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
+            register(drive, intakeSubsystem, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
 
             defaultDriveCommand = new DefaultDriveCommand(drive,
                     driver::getLeftX,
@@ -424,7 +429,9 @@ public class MyRobot extends Robot {
 
             autoAimCommand = new AutoAimTurretCommand(
                     shooterSubsystem,
-                    targetAngle
+                    targetAngle,
+                    this,
+                     startShooter
             );
 
 
@@ -478,6 +485,13 @@ public class MyRobot extends Robot {
             Button sensorTele = new GamepadButton(operator, GamepadKeys.Button.BACK);
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
+
+            shooterStop.whenPressed(
+                    new SequentialCommandGroup(
+                        new InstantCommand(this::changeShooterState),
+                        new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
+                    )
+            );
 
             intakeFront.whileHeld(
 
@@ -627,7 +641,7 @@ public class MyRobot extends Robot {
                             )
                     )
             );
-            shooterStart.whenPressed(
+            /*shooterStart.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
                                     new InstantCommand(()-> telemetry.clearAll()),
@@ -673,7 +687,7 @@ public class MyRobot extends Robot {
                             ),
                             new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.INIT)
                     )
-            );
+            );*/
 
 
             sensorTele.whileHeld(
@@ -686,6 +700,9 @@ public class MyRobot extends Robot {
                     )
             );
         }
-    }
 
+    }
+    public void changeShooterState(){
+        startShooter = !startShooter;
+    }
 }
