@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -90,6 +91,23 @@ public class Shooter_Subsystem extends SubsystemBase {
         return propAprilTag;
     }
 
+    public double[] getRobotPosition(){
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            Pose3D botpose = result.getBotpose();
+            if (botpose != null) {
+                double x = botpose.getPosition().x;
+                double y = botpose.getPosition().y;
+                botX = x;
+                botY = y;
+                telemetry.addData("MT1 Location", "(" + x + ", " + y + ")");
+                telemetry.update();
+            }
+        }
+        double[] botPos = {botX, botY};
+        return botPos;
+    }
+
     public boolean lightTreshold(){
         LLResult result = limelight.getLatestResult();
         double bearingAprilTag = result.getTx();
@@ -130,7 +148,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.update();
     }
 
-    public void panelTelemetry(double bearing, double power, double shootingPower, double distance){
+    public void panelTelemetry(double bearing, double power, double shootingPower, double distance, Pose2D robotPos){
         panelsTelemetry.addData("targetPower", power);
         panelsTelemetry.addData("targetBearing", bearing);
         panelsTelemetry.addData("shooterPower", shootingPower);
@@ -139,6 +157,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.addData("targetBearing", bearing);
         telemetry.addData("shooterPower", shootingPower);
         telemetry.addData("Distance", distance);
+        telemetry.addData("Pos", robotPos);
         telemetry.update();
         panelsTelemetry.update();
     }

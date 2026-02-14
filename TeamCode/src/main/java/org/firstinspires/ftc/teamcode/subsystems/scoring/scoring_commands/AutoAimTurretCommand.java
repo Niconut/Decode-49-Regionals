@@ -9,7 +9,9 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.Shooter_Subsystem;
 @Configurable
@@ -26,7 +28,7 @@ public class AutoAimTurretCommand extends CommandBase {
     private static double turretProp[] = {0, 0};
     private static double turretBearing = 0;
     private static double turretRange = 0;
-    private static double robotPos[] = {0,0,0};
+    private static double robotPos[] = {0,0};
     public static double kp = 0.03 ;
     public static double ki = 0.05 ;
     public static double kd = 0.0 ;
@@ -67,6 +69,17 @@ public class AutoAimTurretCommand extends CommandBase {
         scoringShooterSubsystem = subsystem;
         PID = new PIDController(kp, ki, kd);
         addRequirements(scoringShooterSubsystem);
+        odo = robot.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        odo.setOffsets(-3.75, -3.17, DistanceUnit.INCH);
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+        if (scoringShooterSubsystem.getDetected()){
+            robotPos = scoringShooterSubsystem.getRobotPosition();
+            double x = robotPos[0];
+            double y = robotPos[1];
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.RADIANS, 0));
+        }
     }
 
     @Override
@@ -83,6 +96,24 @@ public class AutoAimTurretCommand extends CommandBase {
         turretBearing = (turretProp[0]);
         turretRange = (turretProp[1]);
         double targettx = targetAngle;
+        odo.update();
+
+
+
+        Pose2D robotPose = odo.getPosition();
+        double y = robotPose.getX(DistanceUnit.INCH);
+        double x = robotPose.getY(DistanceUnit.INCH);
+        double H = robotPose.getHeading(AngleUnit.RADIANS);
+        double robotH = -(H);
+        double RED_GOAL_X = 13.63;
+        double RED_GOAL_Y = 127.64;
+
+        double dx = RED_GOAL_X - x;
+        double dy = RED_GOAL_Y - y;
+        double floorDistance = Math.hypot(dx, dy);
+
+
+        shooterPower = 975 + (floorDistance - 70) * ((1300.0 - 975.0) / (124.0 - 70.0));
 
 
         /*if ((distance <=72.9) && (distance >=60)){
@@ -97,7 +128,7 @@ public class AutoAimTurretCommand extends CommandBase {
 
 
 
-        if ((Math.abs(turretRange)!= 0) && startShooter) {
+        /*if ((Math.abs(turretRange)!= 0) && startShooter) {
             distance = (height2 - height1) / Math.tan(Math.toRadians(angle1 + turretRange));
             if (robot.operator.getButton(GamepadKeys.Button.DPAD_UP)) {
                 shooterPower = higherPower + (distance - 70) * ((1700.0 - 1300.0) / (124.0 - 70.0));
@@ -108,7 +139,7 @@ public class AutoAimTurretCommand extends CommandBase {
             }
         } else if (!startShooter){
             shooterPower = 10;
-        }
+        }*/
         scoringShooterSubsystem.setVelocity(shooterPower);
 
         double error = turretBearing - targettx;
@@ -132,7 +163,7 @@ public class AutoAimTurretCommand extends CommandBase {
         }
 
         //kp * error;
-        scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, distance);
+        scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, distance, robotPose);
         scoringShooterSubsystem.setTurretPower(power);
 
     }
