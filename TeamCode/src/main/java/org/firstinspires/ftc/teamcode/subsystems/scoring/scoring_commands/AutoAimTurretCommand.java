@@ -119,7 +119,7 @@ public class AutoAimTurretCommand extends CommandBase {
         double floorDistance = Math.hypot(dx, dy);
 
 
-        shooterPower = 975 + (floorDistance - 70) * ((1300.0 - 975.0) / (124.0 - 70.0));
+        shooterPower = 925 + (floorDistance - 70) * ((1300.0 - 925.0) / (124.0 - 70.0));
 
 
         /*if ((distance <=72.9) && (distance >=60)){
