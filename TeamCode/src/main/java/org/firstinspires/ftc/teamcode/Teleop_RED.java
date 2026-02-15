@@ -10,6 +10,6 @@ public class Teleop_RED extends CommandOpMode {
 
     @Override
     public void initialize(){
-        MyRobot robot = new MyRobot(this, MyRobot.TeleOpModeType.Robot, MyRobot.TeleOpMode.RED);
+        MyRobot robot = new MyRobot(this, MyRobot.UsingDrive.YesDrive, MyRobot.TeleOpModeType.Robot, MyRobot.TeleOpMode.RED);
     }
 }

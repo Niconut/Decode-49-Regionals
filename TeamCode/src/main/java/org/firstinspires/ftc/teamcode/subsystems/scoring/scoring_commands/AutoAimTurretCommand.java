@@ -34,8 +34,8 @@ public class AutoAimTurretCommand extends CommandBase {
     private static double turretBearing = 0;
     private static double turretRange = 0;
     private static double robotPos[] = {0,0};
-    public static double kp = 0.03 ;
-    public static double ki = 0.05 ;
+    public static double kp = 0.02 ;
+    public static double ki = 0.0 ;
     public static double kd = 0.0 ;
     public static double power = 0;
     public static double kf = 0.01 ;
@@ -75,7 +75,7 @@ public class AutoAimTurretCommand extends CommandBase {
         turretSupplier = turretMover;
         PID = new PIDController(kp, ki, kd);
         addRequirements(scoringShooterSubsystem);
-        odo = robot.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        /*odo = robot.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         odo.setOffsets(-3.75, -3.17, DistanceUnit.INCH);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
@@ -85,7 +85,7 @@ public class AutoAimTurretCommand extends CommandBase {
             double x = robotPos[0];
             double y = robotPos[1];
             odo.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.RADIANS, 0));
-        }
+        }*/
     }
 
     @Override
@@ -102,7 +102,7 @@ public class AutoAimTurretCommand extends CommandBase {
         turretBearing = (turretProp[0]);
         turretRange = (turretProp[1]);
         double targettx = targetAngle;
-        odo.update();
+        /*odo.update();
 
 
 
@@ -119,7 +119,7 @@ public class AutoAimTurretCommand extends CommandBase {
         double floorDistance = Math.hypot(dx, dy);
 
 
-        shooterPower = 925 + (floorDistance - 70) * ((1300.0 - 925.0) / (124.0 - 70.0));
+        shooterPower = 925 + (floorDistance - 70) * ((1300.0 - 925.0) / (124.0 - 70.0));*/
 
 
         /*if ((distance <=72.9) && (distance >=60)){
@@ -146,7 +146,7 @@ public class AutoAimTurretCommand extends CommandBase {
         } else if (!startShooter){
             shooterPower = 10;
         }*/
-        scoringShooterSubsystem.setVelocity(shooterPower);
+        //scoringShooterSubsystem.setVelocity(shooterPower);
 
         double error = turretBearing - targettx;
         if((Math.abs(turretBearing) != 0) && (turretSupplier.getAsDouble() == 0)) {
@@ -157,21 +157,8 @@ public class AutoAimTurretCommand extends CommandBase {
                 power = 0;
         }
 
-        if ( (Math.abs(turretBearing) != 0) && (Math.abs(targetAngle - turretBearing) < turretAngleThreshold)){
-            counter = counter + 1;
-        }
-        if (counter >= 5){
-            scoringShooterSubsystem.lightGreen();
-        } else {
-            scoringShooterSubsystem.lightRed();
-        }
-
-        if (scoringShooterSubsystem.getDetected() == false || Math.abs(targetAngle - turretBearing) > turretAngleThreshold){
-            counter = 0;
-        }
-
         //kp * error;
-        scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, distance, robotPose);
+        scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, distance);
         scoringShooterSubsystem.setTurretPower(power);
 
     }

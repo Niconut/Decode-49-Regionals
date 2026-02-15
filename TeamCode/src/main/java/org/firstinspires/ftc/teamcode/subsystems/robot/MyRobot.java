@@ -27,6 +27,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Commands.Actuate
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.SlowModeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.endgame.Endgame_Commands.MoveEndgameKickstandCommand;
+import org.firstinspires.ftc.teamcode.subsystems.endgame.Endgame_Kickstand;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.intake.intake_commands.SpinIntakeSubsystemCommand;
@@ -38,6 +40,7 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands.MoveSc
 import com.bylazar.gamepad.PanelsGamepad;
 
 public class MyRobot extends Robot {
+
     public GamepadManager g1Manager = PanelsGamepad.INSTANCE.getFirstManager();
     public GamepadManager g2Manager = PanelsGamepad.INSTANCE.getSecondManager();
     public final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -54,6 +57,7 @@ public class MyRobot extends Robot {
     public Light_Indicator lightIndicator;
     public Intake_Indexer intakeIndexer;
     public Scoring_Gate scoringGate;
+    public Endgame_Kickstand endgameKickstand;
     public GamepadEx driver;
     public GamepadEx operator;
     public DistanceUnit distanceUnit;
@@ -74,18 +78,22 @@ public class MyRobot extends Robot {
 
     public static ElapsedTime shooterTime;
     public static boolean startShooter = true;
-
+    public enum UsingDrive {
+        NoDrive, YesDrive
+    }
     public enum TeleOpModeType {
         Field, Robot
     }
 
     public enum TeleOpMode {
         BLUE,
-        RED
+        RED,
+        EngameTesting,
+        TurretTesting
     }
 
     // the constructor with a specified opmode type
-    public MyRobot(LinearOpMode opMode, TeleOpModeType type, TeleOpMode mode) {
+    public MyRobot(LinearOpMode opMode, UsingDrive driving, TeleOpModeType type, TeleOpMode mode) {
         this.opMode = opMode;
         this.hardwareMap = opMode.hardwareMap;
         this.telemetry = opMode.telemetry;
@@ -94,10 +102,12 @@ public class MyRobot extends Robot {
         var g1 = g1Manager.asCombinedFTCGamepad(opMode.gamepad1);
         var g2 = g2Manager.asCombinedFTCGamepad(opMode.gamepad2);
         initTele(mode);
-        if (type == TeleOpModeType.Field) {
-            drive.setFieldOriented(true);
-        } else {
-            drive.setFieldOriented(false);
+        if (driving == UsingDrive.YesDrive ){
+            if (type == TeleOpModeType.Field) {
+                drive.setFieldOriented(true);
+            } else  {
+                drive.setFieldOriented(false);
+            }
         }
     }
 
@@ -701,6 +711,35 @@ public class MyRobot extends Robot {
                             new InstantCommand(() -> telemetry.update())
                     )
             );
+        } else if (mode == TeleOpMode.EngameTesting){
+            endgameKickstand = new Endgame_Kickstand(this);
+            register(endgameKickstand);
+
+            Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
+            Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
+
+            endgameActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.DOWN));
+
+            endgameDeActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.UP));
+
+
+
+        }else if (mode == TeleOpMode.TurretTesting){
+            shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.BLUE);
+            register(shooterSubsystem);
+
+            autoAimCommand = new AutoAimTurretCommand(
+                    shooterSubsystem,
+                    targetAngle,
+                    this,
+                    startShooter,
+                    operator::getRightX
+            );
+
+            CommandScheduler.getInstance().run();
+            CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
+
+
         }
 
     }
