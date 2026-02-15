@@ -35,6 +35,19 @@ public class Scoring_Shooter_Action {
         }
     }
 
+    public class shootBalls2 implements Action{
+        public boolean initialized = false;
+
+        @Override
+        public boolean run (@NonNull TelemetryPacket packet){
+            if(!initialized){
+                ScoringShooter.setVelocity(1450);
+                initialized = true;
+            }
+            return false;
+        }
+    }
+
     public class stopShooter implements Action{
         public boolean initialized = false;
         public double INIT = 0;
@@ -129,4 +142,5 @@ public class Scoring_Shooter_Action {
     public Action FarShooter(){return new farShooter();}
     public Action FartherShooter(){return new fartherShooter();}
     public Action CloseShooter2(){return new closeShooter2();}
+    public Action ShootBalls2(){return new shootBalls2();}
 }
