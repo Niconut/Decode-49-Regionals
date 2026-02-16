@@ -171,26 +171,26 @@ public class MyRobot extends Robot {
                     )
             );
 
-            Button intakeFront = new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER);
-            Button intakeBack = new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER);
-            Button intakeShoot1 = new GamepadButton(operator, GamepadKeys.Button.A);
-            Button shooterFar = new GamepadButton(operator, GamepadKeys.Button.Y);
+            Button intakeFront = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
+            Button intakeBack = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
+            Button intakeShoot1 = new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER);
+            Button shooterFar = new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER);
             Button shooterStart = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
             Button shooterStartClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
-            Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
             Button shooterStartCloseClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT);
+            //Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
             Button sensorTele = new GamepadButton(operator, GamepadKeys.Button.BACK);
 
 
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
 
-            shooterStop.whenPressed(
+            /*shooterStop.whenPressed(
                     new SequentialCommandGroup(
                             new InstantCommand(this::changeShooterState),
                             new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
                     )
-            );
+            );*/
 
             intakeFront.whileHeld(
                     new ParallelCommandGroup(
@@ -478,24 +478,24 @@ public class MyRobot extends Robot {
 
 
 
-            Button intakeFront = new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER);
-            Button intakeBack = new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER);
-            Button intakeShoot1 = new GamepadButton(operator, GamepadKeys.Button.A);
-            Button shooterFar = new GamepadButton(operator, GamepadKeys.Button.Y);
+            Button intakeFront = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
+            Button intakeBack = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
+            Button intakeShoot1 = new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER);
+            Button shooterFar = new GamepadButton(operator, GamepadKeys.Button.LEFT_BUMPER);
             Button shooterStart = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
             Button shooterStartClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
             Button shooterStartCloseClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT);
-            Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
+            //Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
             Button sensorTele = new GamepadButton(operator, GamepadKeys.Button.BACK);
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
 
-            shooterStop.whenPressed(
+            /*shooterStop.whenPressed(
                     new SequentialCommandGroup(
                         new InstantCommand(this::changeShooterState),
                         new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
                     )
-            );
+            );*/
 
             intakeFront.whileHeld(
 
