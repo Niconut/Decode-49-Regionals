@@ -65,9 +65,14 @@ public class AutoAimTurretCommand extends CommandBase {
     public static boolean startShooter = true;
     private AnalogInput turretAnalog; // Only source of position data
     private GoBildaPinpointDriver odo;
+    public enum Team {
+        Blue, Red
+    }
+    private final Team team;
 
 
-    public AutoAimTurretCommand(Shooter_Subsystem subsystem, double TargetAngle, MyRobot robot, boolean StartShooter, DoubleSupplier turretMover){
+    public AutoAimTurretCommand(Shooter_Subsystem subsystem, double TargetAngle, MyRobot robot, boolean StartShooter, DoubleSupplier turretMover, Team team){
+        this.team = team;
         startShooter = StartShooter;
         this.robot = robot;
         targetAngle = TargetAngle;
@@ -84,7 +89,7 @@ public class AutoAimTurretCommand extends CommandBase {
             robotPos = scoringShooterSubsystem.getRobotPosition();
             double x = robotPos[0];
             double y = robotPos[1];
-            odo.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.RADIANS, 0));
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.RADIANS, Math.toRadians(0)));
         }
     }
 
@@ -146,6 +151,14 @@ public class AutoAimTurretCommand extends CommandBase {
         } else if (!startShooter){
             shooterPower = 10;
         }*/
+        if (robot.driver.getButton(GamepadKeys.Button.BACK)){
+            if(team == Team.Blue){
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, -8, -9, AngleUnit.RADIANS, Math.toRadians(0)));
+            };
+            if(team == Team.Red){
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, -8, 9, AngleUnit.RADIANS, Math.toRadians(0)));
+            };
+        }
         scoringShooterSubsystem.setVelocity(shooterPower);
 
         double error = turretBearing - targettx;

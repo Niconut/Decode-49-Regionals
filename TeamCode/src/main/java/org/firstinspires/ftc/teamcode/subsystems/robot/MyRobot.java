@@ -135,7 +135,8 @@ public class MyRobot extends Robot {
                      targetAngle,
                     this,
                     startShooter,
-                    operator::getRightX
+                    operator::getRightX,
+                    AutoAimTurretCommand.Team.Red
             );
 
             CommandScheduler.getInstance().run();
@@ -433,7 +434,8 @@ public class MyRobot extends Robot {
                     targetAngle,
                     this,
                      startShooter,
-                    operator::getRightX
+                    operator::getRightX,
+                    AutoAimTurretCommand.Team.Blue
             );
 
 

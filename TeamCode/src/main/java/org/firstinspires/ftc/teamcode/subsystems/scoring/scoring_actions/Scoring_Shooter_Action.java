@@ -41,7 +41,7 @@ public class Scoring_Shooter_Action {
         @Override
         public boolean run (@NonNull TelemetryPacket packet){
             if(!initialized){
-                ScoringShooter.setVelocity(1450);
+                ScoringShooter.setVelocity(1435);
                 initialized = true;
             }
             return false;
