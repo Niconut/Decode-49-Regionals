@@ -46,7 +46,7 @@ public class AutoAimTurretCommand extends CommandBase {
     private GoBildaPinpointDriver odo;
     private double CLOSE_DISTANCE = 80;
     private double FAR_DISTANCE = 118;
-    private double CLOSE_DISTANCE_SPEED = 1315;
+    private double CLOSE_DISTANCE_SPEED = 1330;
     private double MIN_SPEED = 1150;
     private double FAR_DISTANCE_SPEED = 1600;
     private double targetDistance = 0;
