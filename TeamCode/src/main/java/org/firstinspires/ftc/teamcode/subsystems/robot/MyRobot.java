@@ -178,17 +178,16 @@ public class MyRobot extends Robot {
             Button shooterStart = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
             Button shooterStartClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
             Button shooterStartCloseClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT);
-            //Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
+            Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
             Button sensorTele = new GamepadButton(operator, GamepadKeys.Button.BACK);
-
-
+            Button directIntakeShoot = new GamepadButton(operator, GamepadKeys.Button.LEFT_STICK_BUTTON);
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
 
-            /*shooterStop.whenPressed(
+           /* shooterStop.whenPressed(
                     new SequentialCommandGroup(
-                            new InstantCommand(this::changeShooterState),
-                            new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
+                        new InstantCommand(this::changeShooterState),
+                        new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
                     )
             );*/
 
@@ -323,11 +322,28 @@ public class MyRobot extends Robot {
                     )
             );
 
+            directIntakeShoot.whileHeld(
+                    new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                    new InstantCommand(()-> telemetry.clearAll()),
+                                    new InstantCommand(()-> telemetry.addLine("Shoot while Intaking")),
+                                    new InstantCommand(()-> telemetry.update())
+                            ),
+                            new SequentialCommandGroup(
+                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
+                                    new WaitCommand(250),
+                                    new ParallelCommandGroup(
+                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.CLOSESHOOT_SHOOT_SHOOT)
+                                    )
+                            )
+                    )
+            );
+
             shooterFar.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
                                     new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Close Range Shooting")),
+                                    new InstantCommand(()-> telemetry.addLine("Far Range Shooting")),
                                     new InstantCommand(()-> telemetry.update())
                             ),
                             new SequentialCommandGroup(
@@ -405,6 +421,7 @@ public class MyRobot extends Robot {
                     )
             );
         }
+
         else if (mode == TeleOpMode.BLUE){
             targetAngle = 1.50;
             shooterTime = new ElapsedTime();
@@ -438,14 +455,9 @@ public class MyRobot extends Robot {
                     AutoAimTurretCommand.Team.Blue
             );
 
-
-
-
             CommandScheduler.getInstance().run();
             CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
             CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
-
-
 
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
             Button driveTelemetry = new GamepadButton(driver, GamepadKeys.Button.BACK);
@@ -475,9 +487,6 @@ public class MyRobot extends Robot {
                     )
             );
 
-
-
-
             Button intakeFront = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
             Button intakeBack = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
             Button intakeShoot1 = new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER);
@@ -485,12 +494,13 @@ public class MyRobot extends Robot {
             Button shooterStart = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
             Button shooterStartClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
             Button shooterStartCloseClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT);
-            //Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
+            Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
             Button sensorTele = new GamepadButton(operator, GamepadKeys.Button.BACK);
+            Button directIntakeShoot = new GamepadButton(operator, GamepadKeys.Button.LEFT_STICK_BUTTON);
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
 
-            /*shooterStop.whenPressed(
+           /* shooterStop.whenPressed(
                     new SequentialCommandGroup(
                         new InstantCommand(this::changeShooterState),
                         new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
@@ -498,9 +508,7 @@ public class MyRobot extends Robot {
             );*/
 
             intakeFront.whileHeld(
-
                             new SequentialCommandGroup(
-
                                     new InstantCommand(()-> {
                                         if (shooterSensorTriggered == false) {
                                             shooterSensorTriggered = distanceSensor.shootSensorTriggered();
@@ -600,7 +608,6 @@ public class MyRobot extends Robot {
                     )
             );
 
-
             intakeShoot1.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
@@ -622,11 +629,29 @@ public class MyRobot extends Robot {
                             )
                     )
             );
+
+            directIntakeShoot.whileHeld(
+                    new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                    new InstantCommand(()-> telemetry.clearAll()),
+                                    new InstantCommand(()-> telemetry.addLine("Shoot while Intaking")),
+                                    new InstantCommand(()-> telemetry.update())
+                            ),
+                            new SequentialCommandGroup(
+                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
+                                    new WaitCommand(250),
+                                    new ParallelCommandGroup(
+                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.CLOSESHOOT_SHOOT_SHOOT)
+                                    )
+                            )
+                    )
+            );
+
             shooterFar.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
                                     new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Close Range Shooting")),
+                                    new InstantCommand(()-> telemetry.addLine("Far Range Shooting")),
                                     new InstantCommand(()-> telemetry.update())
                             ),
                             new SequentialCommandGroup(

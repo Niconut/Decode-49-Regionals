@@ -22,7 +22,6 @@ public class AutoAimTurretCommand extends CommandBase {
     private MyRobot robot;
     public PIDController PID;
     private final DoubleSupplier turretSupplier;
-    private double turretThreshold = 0;
     private final Shooter_Subsystem scoringShooterSubsystem;
     public final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     public static double height1 = 16;// height of limelight lens from the floort
@@ -40,34 +39,35 @@ public class AutoAimTurretCommand extends CommandBase {
     public static double power = 0;
     public static double kf = 0.01 ;
     public static double targetAngle = 0;
-    private static double TURRET_TARGET_POSITION = 0.5;
-//    private static double TURRET_ANGLE_INCREMENTS = 0.0001;
-    private static double TURRET_ANGLE_THRESHOLD = 0.5;
-    private static double BIG_GEAR_TEETH = 100;
-    private static double SMALL_GEAR_TEETH = 40;
-    private static double SERVO_TRAVEL_ANGLE = 320;
-    private static double SERVO_TRAVEL_VOLTAGE = 0.5;
-    private static double SERVO_GAIN_FACTOR = 1;
-    private static double TURRET_ANGLE_INCREMENTS = ((SERVO_TRAVEL_VOLTAGE/SERVO_TRAVEL_ANGLE)*(SMALL_GEAR_TEETH/BIG_GEAR_TEETH))/SERVO_GAIN_FACTOR;
-    private static double FLYWHEEL_FILTER_COEFF_A = 50;
-    private static double FLYWHEEL_FILTER_COEFF_B = 256;
-    private static double flywheelFilteredRange = 0;
-
-    private static double FLYWHEEL_SPEED_THRESHOLD = 25;
-
-    private static double FLYWHEEL_RANGE_FACTOR = 13.5;
-    private static double flywheelTargetSpeed = 0;
-    private static double flywheelCurrentSpeed = 0;
     double counter = 0;
-    double turretAngleThreshold = 1.50;
-    public static double lowerPower = 1200;
-    public static double higherPower = 1400;
+    double TURRET_ANGLE_THRESHOLD = 1.50;
     public static boolean startShooter = true;
     private AnalogInput turretAnalog; // Only source of position data
     private GoBildaPinpointDriver odo;
+    private double CLOSE_DISTANCE = 80;
+    private double FAR_DISTANCE = 118;
+    private double CLOSE_DISTANCE_SPEED = 1315;
+    private double MIN_SPEED = 1150;
+    private double FAR_DISTANCE_SPEED = 1600;
+    private double targetDistance = 0;
+    private double RED_GOAL_X = 13.63;
+    private double RED_GOAL_Y = 127.64;
+    private double BLUE_GOAL_X = 13.63;
+    private double BLUE_GOAL_Y = 127.64;
+    private double goal_X = 0;
+    private double goal_Y = 0;
+    private double robotPosX = 0;
+    private double robotPosY = 0;
+    private double TURRET_MANUAL_CONTROL_THRESHOLD = 0.05;
+    private double robotResetPosX = 72;
+    private double robotResetPosY = 72;
+    private double robotResetAngleBlue = 180;
+    private double robotResetAngleRed = 0;
+    private double robotResetAngle = 0;
     public enum Team {
         Blue, Red
     }
+
     private final Team team;
 
 
@@ -78,55 +78,56 @@ public class AutoAimTurretCommand extends CommandBase {
         targetAngle = TargetAngle;
         scoringShooterSubsystem = subsystem;
         turretSupplier = turretMover;
+
         PID = new PIDController(kp, ki, kd);
+        PID.setPID(kp, ki, kd);
+
         addRequirements(scoringShooterSubsystem);
         odo = robot.hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         odo.setOffsets(-3.75, -3.17, DistanceUnit.INCH);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        odo.resetPosAndIMU();
-        if (scoringShooterSubsystem.getDetected()){
-            robotPos = scoringShooterSubsystem.getRobotPosition();
-            double x = robotPos[0];
-            double y = robotPos[1];
-            odo.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.RADIANS, Math.toRadians(0)));
-        }
     }
 
     @Override
     public void initialize() {
         counter = 0;
-        //scoringShooterSubsystem.resumeStraming();
+        odo.resetPosAndIMU();
+
+        if (scoringShooterSubsystem.getDetected()){
+            robotPos = scoringShooterSubsystem.getRobotPosition();
+            odo.setPosition(new Pose2D(DistanceUnit.INCH, robotPos[0], robotPos[1], AngleUnit.RADIANS, Math.toRadians(0)));
+        }
     }
 
     public void execute() {
-        //nothing to do in the loop
-
-        PID.setPID(kp, ki, kd);
         turretProp = scoringShooterSubsystem.detectAprilTag();
         turretBearing = (turretProp[0]);
         turretRange = (turretProp[1]);
-        double targettx = targetAngle;
+
+        // * * * * Odometry based flywheel speed calculation * * * *
         odo.update();
-
-
-
         Pose2D robotPose = odo.getPosition();
-        double y = robotPose.getX(DistanceUnit.INCH);
-        double x = robotPose.getY(DistanceUnit.INCH);
-        double H = robotPose.getHeading(AngleUnit.RADIANS);
-        double robotH = -(H);
-        double RED_GOAL_X = 13.63;
-        double RED_GOAL_Y = 127.64;
+        robotPosX = robotPose.getX(DistanceUnit.INCH);
+        robotPosY = robotPose.getY(DistanceUnit.INCH);
 
-        double dx = RED_GOAL_X - x;
-        double dy = RED_GOAL_Y - y;
-        double floorDistance = Math.hypot(dx, dy);
+        if (team == Team.Blue) {
+            goal_X = BLUE_GOAL_X;
+            goal_Y = BLUE_GOAL_Y;
+            robotResetAngle = robotResetAngleBlue;
+        }
+        if (team == Team.Red){
+            goal_X = RED_GOAL_X;
+            goal_Y = RED_GOAL_Y;
+            robotResetAngle = robotResetAngleRed;
+        }
+        targetDistance = Math.hypot(goal_X - robotPosX, goal_Y - robotPosY);
 
+        shooterPower = CLOSE_DISTANCE_SPEED + (targetDistance - CLOSE_DISTANCE) * ((FAR_DISTANCE_SPEED - CLOSE_DISTANCE_SPEED) / (FAR_DISTANCE - CLOSE_DISTANCE));
+        shooterPower = Math.max(shooterPower, MIN_SPEED);
+        scoringShooterSubsystem.setVelocity(shooterPower);
 
-        shooterPower = 925 + (floorDistance - 70) * ((1300.0 - 925.0) / (124.0 - 70.0));
-
-
+        // * * * * Limelight based flywheel speed calculation * * * *
         /*if ((distance <=72.9) && (distance >=60)){
             shooterPower = 1300;
         } else if ((distance <=59.9) && (distance >=45)){
@@ -136,8 +137,6 @@ public class AutoAimTurretCommand extends CommandBase {
         }else {
             shooterPower = 0;
         }*/
-
-
 
         /*if ((Math.abs(turretRange)!= 0) && startShooter) {
             distance = (height2 - height1) / Math.tan(Math.toRadians(angle1 + turretRange));
@@ -151,26 +150,24 @@ public class AutoAimTurretCommand extends CommandBase {
         } else if (!startShooter){
             shooterPower = 10;
         }*/
-        if (robot.driver.getButton(GamepadKeys.Button.BACK)){
-            if(team == Team.Blue){
-                odo.setPosition(new Pose2D(DistanceUnit.INCH, -8, -9, AngleUnit.RADIANS, Math.toRadians(0)));
-            };
-            if(team == Team.Red){
-                odo.setPosition(new Pose2D(DistanceUnit.INCH, -8, 9, AngleUnit.RADIANS, Math.toRadians(0)));
-            };
-        }
-        scoringShooterSubsystem.setVelocity(shooterPower);
 
-        double error = turretBearing - targettx;
-        if((Math.abs(turretBearing) != 0) && (turretSupplier.getAsDouble() == 0)) {
-            power = PID.calculate(turretBearing, targettx);
+        // * * * * Reset Robot position * * * *
+        if (robot.driver.getButton(GamepadKeys.Button.BACK)){
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosX, robotResetPosY, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
+        }
+
+        // * * * * Calculate Turret Rotation
+        if((Math.abs(turretBearing) != 0) && (Math.abs(turretSupplier.getAsDouble()) <= TURRET_MANUAL_CONTROL_THRESHOLD)) {
+            power = PID.calculate(turretBearing, targetAngle);
         } else if (turretSupplier.getAsDouble() != 0) {
             power = -turretSupplier.getAsDouble();
         } else {
-                power = 0;
+            power = 0;
         }
+        scoringShooterSubsystem.setTurretPower(power);
 
-        if ( (Math.abs(turretBearing) != 0) && (Math.abs(targetAngle - turretBearing) < turretAngleThreshold)){
+        // * * * * Light Indicators * * * *
+        if ( (Math.abs(turretBearing) != 0) && (Math.abs(targetAngle - turretBearing) < TURRET_ANGLE_THRESHOLD)){
             counter = counter + 1;
         }
         if (counter >= 5){
@@ -179,13 +176,13 @@ public class AutoAimTurretCommand extends CommandBase {
             scoringShooterSubsystem.lightRed();
         }
 
-        if (scoringShooterSubsystem.getDetected() == false || Math.abs(targetAngle - turretBearing) > turretAngleThreshold){
+        if (scoringShooterSubsystem.getDetected() == false || Math.abs(targetAngle - turretBearing) > TURRET_ANGLE_THRESHOLD){
             counter = 0;
         }
 
-        //kp * error;
-        scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, distance, robotPose);
-        scoringShooterSubsystem.setTurretPower(power);
+        // * * * * Update Telemetry * * * *
+        scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, targetDistance, robotPose);
+
 
     }
 }

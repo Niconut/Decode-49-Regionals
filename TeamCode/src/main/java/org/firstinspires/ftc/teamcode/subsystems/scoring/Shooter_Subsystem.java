@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
@@ -152,12 +153,13 @@ public class Shooter_Subsystem extends SubsystemBase {
         panelsTelemetry.addData("targetPower", power);
         panelsTelemetry.addData("targetBearing", bearing);
         panelsTelemetry.addData("shooterPower", shootingPower);
-        panelsTelemetry.addData("Distance", distance);
+        panelsTelemetry.addData("targetDistance", distance);
         telemetry.addData("targetPower", power);
         telemetry.addData("targetBearing", bearing);
         telemetry.addData("shooterPower", shootingPower);
         telemetry.addData("Distance", distance);
-        telemetry.addData("Pos", robotPos);
+        telemetry.addData("PosX", robotPos.getX(DistanceUnit.INCH));
+        telemetry.addData("PosY", robotPos.getY(DistanceUnit.INCH));
         telemetry.update();
         panelsTelemetry.update();
     }
@@ -165,9 +167,6 @@ public class Shooter_Subsystem extends SubsystemBase {
     public void setShooterPID(){
         this.ScoringShooter.setVelocityPIDFCoefficients(kp,ki,kd,kf);
     }
-
-
-
 
     public boolean getDetected(){
         LLResult result = limelight.getLatestResult();
@@ -177,7 +176,6 @@ public class Shooter_Subsystem extends SubsystemBase {
         else return false;
     }
     public double getCurrentPosition(){return servoTurret.getPower();}
-
 
     public void lightGreen(){
         LightRight.setPosition(0.5);
