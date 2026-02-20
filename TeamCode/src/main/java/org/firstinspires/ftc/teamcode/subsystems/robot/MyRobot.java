@@ -143,8 +143,10 @@ public class MyRobot extends Robot {
             CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
             CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
 
+            Button driverIntakeFront = new GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER);
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
             Button driveTelemetry = new GamepadButton(driver, GamepadKeys.Button.BACK);
+            Button drivesSoot = new GamepadButton(driver, GamepadKeys.Button.X);
 
             driveSpeedButton
                     .whenHeld(slowModeCommand)
@@ -246,6 +248,81 @@ public class MyRobot extends Robot {
                     )
             );
 
+            driverIntakeFront.whileHeld(
+                    new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                    new InstantCommand(()-> telemetry.clearAll()),
+                                    new InstantCommand(()-> telemetry.addLine("Intake Artifacts From Front")),
+                                    new InstantCommand(()-> telemetry.update())
+                            ),
+                            new SequentialCommandGroup(
+
+                                    new InstantCommand(()-> {
+                                        if (shooterSensorTriggered == false) {
+                                            shooterSensorTriggered = distanceSensor.shootSensorTriggered();
+                                        }
+                                        if (rearSensorTriggered == false) {
+                                            rearSensorTriggered = distanceSensor.rearSensorTriggered() && shooterSensorTriggered;
+                                        }
+                                        if (frontSensorTriggered == false) {
+                                            frontSensorTriggered = distanceSensor.frontSensorTriggered() && rearSensorTriggered && shooterSensorTriggered;
+                                        }
+                                    }),
+                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.CLOSE),
+                                    new ConditionalCommand(
+                                            new ParallelCommandGroup(
+                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT),
+                                                    new ActuateLightIndicatorCommand(lightIndicator, Light_Indicator.LightIndicatorState.BLUE)
+                                            ),
+                                            new ConditionalCommand(
+                                                    new ParallelCommandGroup(
+                                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.FORWARD_OFF_OFF)
+                                                    ),
+                                                    new ConditionalCommand(
+                                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.FORWARD_SLOWFORWARD_OFF),
+                                                            new ParallelCommandGroup(
+                                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.FORWARD_FORWARD_REVERSE),
+                                                                    new ActuateLightIndicatorCommand(lightIndicator, Light_Indicator.LightIndicatorState.YELLOW)
+                                                            ),
+                                                            () -> {return shooterSensorTriggered;}
+                                                    ),
+                                                    () -> {return (rearSensorTriggered);}
+                                            ),
+                                            () -> {return (frontSensorTriggered);}
+                                    )
+                            )
+                    )
+            ).whenReleased(
+                    new SequentialCommandGroup(
+                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT),
+                            new InstantCommand(()-> {
+                                shooterSensorTriggered = false;
+                                frontSensorTriggered = false;
+                                rearSensorTriggered = false;
+                            })
+                    )
+            );
+
+            drivesSoot.whenPressed(
+                    new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                    new InstantCommand(()-> telemetry.clearAll()),
+                                    new InstantCommand(()-> telemetry.addLine("Close Range Shooting")),
+                                    new InstantCommand(()-> telemetry.update())
+                            ),
+                            new SequentialCommandGroup(
+                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
+                                    new WaitCommand(300),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_FORWARD_REVERSE),
+                                    new WaitCommand(750),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                    new WaitCommand(2000),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
+
+                            )
+                    )
+            );
+
             intakeBack.whileHeld(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
@@ -300,6 +377,7 @@ public class MyRobot extends Robot {
                     )
             );
 
+
             intakeShoot1.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
@@ -337,6 +415,16 @@ public class MyRobot extends Robot {
                                     )
                             )
                     )
+            ).whenReleased(
+                    new SequentialCommandGroup(
+                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT),
+                            new InstantCommand(()-> {
+                                shooterSensorTriggered = false;
+                                frontSensorTriggered = false;
+                                rearSensorTriggered = false;
+                            })
+
+                    )
             );
 
             shooterFar.whenPressed(
@@ -355,9 +443,7 @@ public class MyRobot extends Robot {
                                     new WaitCommand(1500),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
                                     new WaitCommand(2000),
-                                    new ParallelCommandGroup(
-                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
-                                    )
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
 
                             )
                     )
@@ -459,8 +545,10 @@ public class MyRobot extends Robot {
             CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
             CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
 
+            Button driverIntakeFront = new GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER);
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
             Button driveTelemetry = new GamepadButton(driver, GamepadKeys.Button.BACK);
+            Button drivesShoot = new GamepadButton(driver, GamepadKeys.Button.X);
 
             driveSpeedButton
                     .whenHeld(slowModeCommand)
@@ -484,6 +572,82 @@ public class MyRobot extends Robot {
                             ),
                             () -> {return (telemetryon);}
 
+                    )
+            );
+
+            driverIntakeFront.whileHeld(
+                    new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                    new InstantCommand(()-> telemetry.clearAll()),
+                                    new InstantCommand(()-> telemetry.addLine("Intake Artifacts From Front")),
+                                    new InstantCommand(()-> telemetry.update())
+                            ),
+                            new SequentialCommandGroup(
+
+                                    new InstantCommand(()-> {
+                                        if (shooterSensorTriggered == false) {
+                                            shooterSensorTriggered = distanceSensor.shootSensorTriggered();
+                                        }
+                                        if (rearSensorTriggered == false) {
+                                            rearSensorTriggered = distanceSensor.rearSensorTriggered() && shooterSensorTriggered;
+                                        }
+                                        if (frontSensorTriggered == false) {
+                                            frontSensorTriggered = distanceSensor.frontSensorTriggered() && rearSensorTriggered && shooterSensorTriggered;
+                                        }
+                                    }),
+                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.CLOSE),
+                                    new ConditionalCommand(
+                                            new ParallelCommandGroup(
+                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT),
+                                                    new ActuateLightIndicatorCommand(lightIndicator, Light_Indicator.LightIndicatorState.BLUE)
+                                            ),
+                                            new ConditionalCommand(
+                                                    new ParallelCommandGroup(
+                                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.FORWARD_OFF_OFF)
+                                                    ),
+                                                    new ConditionalCommand(
+                                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.FORWARD_SLOWFORWARD_OFF),
+                                                            new ParallelCommandGroup(
+                                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.FORWARD_FORWARD_REVERSE),
+                                                                    new ActuateLightIndicatorCommand(lightIndicator, Light_Indicator.LightIndicatorState.YELLOW)
+                                                            ),
+                                                            () -> {return shooterSensorTriggered;}
+                                                    ),
+                                                    () -> {return (rearSensorTriggered);}
+                                            ),
+                                            () -> {return (frontSensorTriggered);}
+                                    )
+                            )
+                    )
+            ).whenReleased(
+                    new SequentialCommandGroup(
+                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT),
+                            new InstantCommand(()-> {
+                                shooterSensorTriggered = false;
+                                frontSensorTriggered = false;
+                                rearSensorTriggered = false;
+                            })
+                    )
+            );
+
+            drivesShoot.whenPressed(
+                    new ParallelCommandGroup(
+                            new SequentialCommandGroup(
+                                    new InstantCommand(()-> telemetry.clearAll()),
+                                    new InstantCommand(()-> telemetry.addLine("Close Range Shooting")),
+                                    new InstantCommand(()-> telemetry.update())
+                            ),
+                            new SequentialCommandGroup(
+                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
+                                    new WaitCommand(300),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
+                                    new WaitCommand(100),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
+                                    new WaitCommand(2000),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
+
+
+                            )
                     )
             );
 
@@ -617,15 +781,12 @@ public class MyRobot extends Robot {
                             ),
                             new SequentialCommandGroup(
                                     new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
-                                    new WaitCommand(250),
-                                    new ParallelCommandGroup(
-                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.CLOSESHOOT_SHOOT_SHOOT)
-                                    ),
+                                    new WaitCommand(300),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
+                                    new WaitCommand(100),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
                                     new WaitCommand(2000),
-                                    new ParallelCommandGroup(
-                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
-                                    )
-
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
                             )
                     )
             );

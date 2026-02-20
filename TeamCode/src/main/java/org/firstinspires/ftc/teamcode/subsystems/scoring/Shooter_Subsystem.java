@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.subsystems.scoring;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -115,6 +117,11 @@ public class Shooter_Subsystem extends SubsystemBase {
         return bearingAprilTag < 1.00 && bearingAprilTag > -1.00;
     }
 
+    public Pose3D getLimelightPose(){
+        LLResult result = limelight.getLatestResult();
+        return result.getBotpose();
+    }
+
     public void stopStreaming(){
         visionPortal.stopStreaming();
     }
@@ -149,7 +156,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.update();
     }
 
-    public void panelTelemetry(double bearing, double power, double shootingPower, double distance, Pose2D robotPos){
+    public void panelTelemetry(double bearing, double power, double shootingPower, double distance, Pose2D robotPos, double targetAngle, double currentEndoderRads, double delta, double totalEncoderRads, double LastEncoderRads, double totalTurretRads, double targetFieldAngle, double turretAngleOffset, double turretStartingAngle, double targetTurretAngle){
         panelsTelemetry.addData("targetPower", power);
         panelsTelemetry.addData("targetBearing", bearing);
         panelsTelemetry.addData("shooterPower", shootingPower);
@@ -160,6 +167,17 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.addData("Distance", distance);
         telemetry.addData("PosX", robotPos.getX(DistanceUnit.INCH));
         telemetry.addData("PosY", robotPos.getY(DistanceUnit.INCH));
+        telemetry.addData("Heading", robotPos.getHeading(AngleUnit.RADIANS));
+        telemetry.addData("lastEncoderAngle", LastEncoderRads);
+        telemetry.addData("currentEncoderAngle", currentEndoderRads);
+        telemetry.addData("delta", delta);
+        telemetry.addData("totalEncoderAngle", totalEncoderRads);
+        telemetry.addData("totalTurretAngle", totalTurretRads);
+        telemetry.addData("targetFieldAngle", targetFieldAngle);
+        telemetry.addData("targetRelativeAngle", targetAngle);
+        telemetry.addData("turretAngleOffset", turretAngleOffset);
+        telemetry.addData("turretStartingAngle", turretStartingAngle);
+        telemetry.addData("targetTurretAngle", targetTurretAngle);
         telemetry.update();
         panelsTelemetry.update();
     }
@@ -184,4 +202,5 @@ public class Shooter_Subsystem extends SubsystemBase {
     public void lightRed(){
         LightRight.setPosition(0.280);
     }
+
 }
