@@ -182,7 +182,7 @@ public class MyRobot extends Robot {
             Button shooterStartCloseClose = new GamepadButton(operator, GamepadKeys.Button.DPAD_LEFT);
             Button shooterStop = new GamepadButton(operator, GamepadKeys.Button.DPAD_RIGHT);
             Button sensorTele = new GamepadButton(operator, GamepadKeys.Button.BACK);
-            Button directIntakeShoot = new GamepadButton(operator, GamepadKeys.Button.LEFT_STICK_BUTTON);
+            Button directIntakeShoot = new GamepadButton(operator, GamepadKeys.Button.X);
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
 
