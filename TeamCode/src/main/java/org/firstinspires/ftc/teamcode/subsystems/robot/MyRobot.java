@@ -712,8 +712,18 @@ public class MyRobot extends Robot {
                     )
             );
         } else if (mode == TeleOpMode.EngameTesting){
+            drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
             endgameKickstand = new Endgame_Kickstand(this);
-            register(endgameKickstand);
+            register(drive, endgameKickstand);
+
+            defaultDriveCommand = new DefaultDriveCommand(drive,
+                    driver::getLeftX,
+                    driver::getLeftY,
+                    driver::getRightX
+
+            );
+            CommandScheduler.getInstance().run();
+            CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
 
             Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
             Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
@@ -725,6 +735,7 @@ public class MyRobot extends Robot {
 
 
         }else if (mode == TeleOpMode.TurretTesting){
+
             shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.BLUE);
             register(shooterSubsystem);
 
