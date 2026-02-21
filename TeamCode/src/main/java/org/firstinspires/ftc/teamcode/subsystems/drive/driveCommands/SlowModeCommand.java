@@ -13,9 +13,9 @@ public class  SlowModeCommand extends CommandBase {
     private final DoubleSupplier strafeSupplier;
     private final DoubleSupplier turnSupplier;
 
-    private static double DRIVE_SLOW_SCALE = 0.3;
-    private static double STRAFE_SLOW_SCALE = 0.3;
-    private static double ROT_SLOW_SCALE = 0.3;
+    private static double DRIVE_SLOW_SCALE = 0.5;
+    private static double STRAFE_SLOW_SCALE = 0.5;
+    private static double ROT_SLOW_SCALE = 0.5;
 
     public SlowModeCommand(driveSubsystem subsystem, DoubleSupplier driveInput, DoubleSupplier strafeInput, DoubleSupplier turnInput) {
         driveSubsystem = subsystem;
