@@ -387,15 +387,12 @@ public class MyRobot extends Robot {
                             ),
                             new SequentialCommandGroup(
                                     new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
-                                    new WaitCommand(250),
-                                    new ParallelCommandGroup(
-                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.CLOSESHOOT_SHOOT_SHOOT)
-                                    ),
+                                    new WaitCommand(300),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
+                                    new WaitCommand(100),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
                                     new WaitCommand(2000),
-                                    new ParallelCommandGroup(
-                                            new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
-                                    )
-
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
                             )
                     )
             );
