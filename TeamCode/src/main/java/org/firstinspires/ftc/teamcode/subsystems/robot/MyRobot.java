@@ -27,6 +27,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Commands.Actuate
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.SlowModeCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.endgame.Endgame_Commands.MoveEndgameKickstandCommand;
+import org.firstinspires.ftc.teamcode.subsystems.endgame.Endgame_Kickstand;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Indexer;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.intake.intake_commands.SpinIntakeSubsystemCommand;
@@ -49,6 +51,7 @@ public class MyRobot extends Robot {
     public driveSubsystem drive;
     public Intake_Subsystem intakeSubsystem;
     public Shooter_Subsystem shooterSubsystem;
+    public Endgame_Kickstand endgameKickstand;
     //public Camera_Subsystem cameraSubsystem;
     public Distance_Sensor distanceSensor;
     public Light_Indicator lightIndicator;
@@ -110,6 +113,7 @@ public class MyRobot extends Robot {
             targetAngle = -1.5;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
+            endgameKickstand = new Endgame_Kickstand(this);
             intakeSubsystem = new Intake_Subsystem(this);
             distanceSensor = new Distance_Sensor(this);
             scoringGate = new Scoring_Gate(this);
@@ -147,6 +151,12 @@ public class MyRobot extends Robot {
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
             Button driveTelemetry = new GamepadButton(driver, GamepadKeys.Button.BACK);
             Button drivesSoot = new GamepadButton(driver, GamepadKeys.Button.X);
+            Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
+            Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
+
+            endgameActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.DOWN));
+
+            endgameDeActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.UP));
 
             driveSpeedButton
                     .whenHeld(slowModeCommand)
@@ -509,6 +519,7 @@ public class MyRobot extends Robot {
             targetAngle = 1.50;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
+            endgameKickstand = new Endgame_Kickstand(this);
             intakeSubsystem = new Intake_Subsystem(this);
             distanceSensor = new Distance_Sensor(this);
             scoringGate = new Scoring_Gate(this);
@@ -546,6 +557,12 @@ public class MyRobot extends Robot {
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
             Button driveTelemetry = new GamepadButton(driver, GamepadKeys.Button.BACK);
             Button drivesShoot = new GamepadButton(driver, GamepadKeys.Button.X);
+            Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
+            Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
+
+            endgameActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.DOWN));
+
+            endgameDeActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.UP));
 
             driveSpeedButton
                     .whenHeld(slowModeCommand)

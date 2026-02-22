@@ -80,8 +80,8 @@ public class Auto_RED_Solo_Near_15_Ball extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(20, 64, Math.toRadians(120)), Math.toRadians(90));
 
         TrajectoryActionBuilder trajectoryShootBalls3 = trajectoryGateBackUp.endTrajectory().fresh()
-                .splineToLinearHeading(new Pose2d(7, 54, Math.toRadians(90)), Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(0,28), Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(10, 54, Math.toRadians(90)), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(10,28), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(-20,20), Math.toRadians(90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryFrontPickUp = trajectoryShootBalls3.endTrajectory().fresh()
