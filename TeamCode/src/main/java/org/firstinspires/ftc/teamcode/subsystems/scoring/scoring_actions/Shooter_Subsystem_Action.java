@@ -16,8 +16,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
     private Limelight3A limelight;
 
     private CRServo servoTurret;
-    public static double kp = 0.03 ;
-    public static double ki = 0.05 ;
+    public static double kp = 0.02 ;
+    public static double ki = 0.0 ;
     public static double kd = 0.0 ;
 
     public enum Pipeline {

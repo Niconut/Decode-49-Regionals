@@ -176,18 +176,18 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
                     scoringGate.OpenGate(),
                     new SleepAction(0.35),
                     SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                    new SleepAction(0.5),
+                    new SleepAction(0.5)
                     // pickup 3rd set
-                    scoringGate.CloseGate(),
-                    new ParallelAction(
-                        TrajectoryBackPickUp,
-                        SLOW_INTAKE(intakeSubsystem, distanceSensor),
-                        scoringShooter.CloseShooter2()
-                    ),
-                    scoringGate.OpenGate(),
-                    new SleepAction(0.35),
-                    FAR_SHOOT(intakeSubsystem),
-                    new SleepAction(0.75)
+//                    scoringGate.CloseGate(),
+//                    new ParallelAction(
+//                        TrajectoryBackPickUp,
+//                        SLOW_INTAKE(intakeSubsystem, distanceSensor),
+//                        scoringShooter.CloseShooter2()
+//                    ),
+//                    scoringGate.OpenGate(),
+//                    new SleepAction(0.35),
+//                    FAR_SHOOT(intakeSubsystem),
+//                    new SleepAction(0.75)
 
                     //TrajectoryPark
                 ),

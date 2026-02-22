@@ -155,7 +155,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.update();
     }
 
-    public void panelTelemetry(double bearing, double power, double shootingPower, double distance, Pose2D robotPos, double targetAngle, double currentEndoderRads, double delta, double totalEncoderRads, double LastEncoderRads, double totalTurretRads, double targetFieldAngle, double turretAngleOffset, double turretStartingAngle, double targetTurretAngle){
+    public void panelTelemetry(double bearing, double power, double shootingPower, double distance, Pose2D robotPos, double targetAngle, double currentEndoderRads, double delta, double totalEncoderRads, double LastEncoderRads, double totalTurretRads, double targetFieldAngle, double turretAngleOffset, double turretStartingAngle, double targetTurretAngle, double robotResetAngle){
         panelsTelemetry.addData("targetPower", power);
         panelsTelemetry.addData("targetBearing", bearing);
         panelsTelemetry.addData("shooterPower", shootingPower);
@@ -177,6 +177,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.addData("turretAngleOffset", turretAngleOffset);
         telemetry.addData("turretStartingAngle", turretStartingAngle);
         telemetry.addData("targetTurretAngle", targetTurretAngle);
+        telemetry.addData("robotRestAngle", robotResetAngle);
         telemetry.update();
         panelsTelemetry.update();
     }

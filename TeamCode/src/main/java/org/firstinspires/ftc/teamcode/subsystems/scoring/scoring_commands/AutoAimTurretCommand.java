@@ -81,8 +81,8 @@ public class AutoAimTurretCommand extends CommandBase {
     private double TURRET_LIMELIGHT_CONTROL_THRESHOLD = 10;
     private double robotResetPosX = 0;
     private double robotResetPosY = 0;
-    private double robotResetPosXBlue = 64;
-    private double robotResetPosYBlue = 64;
+    private double robotResetPosXBlue = -17; //64;
+    private double robotResetPosYBlue = -17; //64;
     private double robotResetPosXRed = 64;
     private double robotResetPosYRed = -64;
     private double robotResetAngleBlue = 90;
@@ -162,9 +162,11 @@ public class AutoAimTurretCommand extends CommandBase {
 
         if (team == Team.Blue) {
             robotResetAngle = robotResetAngleBlue;
+            //robotResetAngle = Math.toDegrees(PostStorage.currentPose.heading.real) + robotResetAngleBlue;
         }
         if (team == Team.Red){
             robotResetAngle = robotResetAngleRed;
+            //robotResetAngle = Math.toDegrees(PostStorage.currentPose.heading.real) + robotResetAngleRed;
         }
 
         double X = PostStorage.currentPose.position.x;
@@ -174,7 +176,19 @@ public class AutoAimTurretCommand extends CommandBase {
         odo.setPosition(new Pose2D(DistanceUnit.INCH, X, Y, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
         odo.update();
 
+        odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosX, robotResetPosY, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
+        odo.update();
         turretAngleOffset = totalEncoderAngle / GEAR_RATIO;
+        initStates = true;
+
+        turretAngleOffset = atan2(goal_X - X , goal_Y - Y);
+        if (turretAngleOffset > MAX_TURRET_ANGLE){
+            turretAngleOffset = turretAngleOffset - Math.PI;
+        }
+        if (turretAngleOffset < -MAX_TURRET_ANGLE){
+            turretAngleOffset = turretAngleOffset + Math.PI;
+        }
+
         initStates = true;
 
     }
@@ -195,9 +209,6 @@ public class AutoAimTurretCommand extends CommandBase {
             flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
             turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
             turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
-            robotResetPosX = robotResetPosXBlue;
-            robotResetPosY = robotResetPosYBlue;
-            robotResetAngle = robotResetAngleBlue;
         }
         if (team == Team.Red){
             goal_X = RED_GOAL_X;
@@ -206,11 +217,10 @@ public class AutoAimTurretCommand extends CommandBase {
             flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
             turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
             turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
-            robotResetPosX = robotResetPosXRed;
-            robotResetPosY = robotResetPosYRed;
-            robotResetAngle = robotResetAngleRed;
         }
 
+        // * * * * Flywheel SPeed Calculation  * * * *
+        // * * * * * * * * * * * * * * * * * * * * * *
         targetDistance = Math.hypot(goal_X - flywheelRobotPosX, goal_Y - flywheelRobotPosY);
 
         shooterPower = CLOSE_DISTANCE_SPEED + (targetDistance - CLOSE_DISTANCE) * ((FAR_DISTANCE_SPEED - CLOSE_DISTANCE_SPEED) / (FAR_DISTANCE - CLOSE_DISTANCE));
@@ -218,41 +228,35 @@ public class AutoAimTurretCommand extends CommandBase {
         shooterPower = Math.min(shooterPower, MAX_SPEED);
         scoringShooterSubsystem.setVelocity(shooterPower);
 
+        // * * * * Odometry Based Turret Angle Calculation * * * *
+        // * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         currentEncoderAngle = (turretAnalog.getVoltage() / MAX_VOLTAGE) * TWO_PI; // goes from 0 to 2 PI
-
         delta = currentEncoderAngle - lastEncoderAngle;
         lastEncoderAngle = currentEncoderAngle;
-
+        // wrap angles
         if (delta < -Math.PI) {         // Wrapped forward
             encoderRotations++;
         }
         else if (delta > Math.PI){      // Wrapped backward
             encoderRotations--;
         }
-        // Total radians the SERVO has spun
+        // Total angler (Radians) the SERVO has spun
         totalEncoderAngle = (encoderRotations * TWO_PI) + currentEncoderAngle;
-        totalTurretAngle = (totalEncoderAngle / GEAR_RATIO);// + Math.toRadians(robotResetAngle);
-        targetTurretAngle = totalTurretAngle - turretAngleOffset;
+        totalTurretAngle = (totalEncoderAngle / GEAR_RATIO);
+        targetTurretAngle = totalTurretAngle + turretAngleOffset;
 
+        // Calculate Turret angle relative to robot heading
         robotHeading =  robotPose.getHeading(AngleUnit.RADIANS);
         targetRelativeAngle =  Math.toRadians(robotResetAngle) + targetTurretAngle - robotHeading;
         while (targetRelativeAngle > Math.PI) targetRelativeAngle -= TWO_PI;
         while (targetRelativeAngle < -Math.PI) targetRelativeAngle += TWO_PI;
 
-        //targetRelativeAngle = Math.max(-1.5, Math.min(1.5, targetRelativeAngle));
-
-//        if(targetTurretAngle < -Math.PI){
-//            targetTurretAngle = targetTurretAngle + TWO_PI;
-//        }
-
-        // --- STEP 3: CALCULATE TARGET ---
-
+        // Calculate target absolute angle based on robot position on the field
         targetFieldAngle = atan2(goal_X - turretRobotPosX , goal_Y - turretRobotPosY);
-
         while (targetRelativeAngle < -Math.PI){
             targetRelativeAngle = targetRelativeAngle + TWO_PI;
         }
-
+        // wrap angles
         if (targetFieldAngle > MAX_TURRET_ANGLE){
             targetFieldAngle = targetFieldAngle - Math.PI;
         }
@@ -260,8 +264,8 @@ public class AutoAimTurretCommand extends CommandBase {
             targetFieldAngle = targetFieldAngle + Math.PI;
         }
 
-
-        // * * * * Limelight based flywheel speed calculation * * * *
+        // * * * * Limelight based flywheel speed calculation  * * * *
+        // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         /*if ((distance <=72.9) && (distance >=60)){
             shooterPower = 1300;
         } else if ((distance <=59.9) && (distance >=45)){
@@ -289,7 +293,13 @@ public class AutoAimTurretCommand extends CommandBase {
         if (robot.driver.getButton(GamepadKeys.Button.BACK)){
             //odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosX, robotResetPosY, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
             odo.update();
-            turretAngleOffset = totalEncoderAngle / GEAR_RATIO;
+            turretAngleOffset = atan2(goal_X - turretRobotPosX , goal_Y - turretRobotPosY);
+            if (turretAngleOffset > MAX_TURRET_ANGLE){
+                turretAngleOffset = turretAngleOffset - Math.PI;
+            }
+            if (turretAngleOffset < -MAX_TURRET_ANGLE){
+                turretAngleOffset = turretAngleOffset + Math.PI;
+            }
             initStates = true;
         }
 
@@ -300,26 +310,26 @@ public class AutoAimTurretCommand extends CommandBase {
             initStates = true;
         }
 
-        // * * * * Calculate Turret Rotation * * * *
-        // Limelight Method Priority 1
+        // * * * * Turret Rotation PIDs  * * * *
+        // * * * * * * * * * * * * * * * * * * *
+        // Limelight Method Priority 2
         if ((Math.abs(turretBearing) != 0) && (Math.abs(turretSupplier.getAsDouble()) <= TURRET_MANUAL_CONTROL_THRESHOLD)) {
             power = -limelight_PID.calculate(turretBearing, targetAngle);
         }
-        // Manual Method Priority 2
+        // Manual Method Priority 1
         else if (Math.abs(turretSupplier.getAsDouble()) > TURRET_MANUAL_CONTROL_THRESHOLD) {
             power = turretSupplier.getAsDouble();
         }
         // Odometry Method Priority 3
         else {
-            if (initStates){
-                power = odo_PID.calculate(targetRelativeAngle, targetFieldAngle);
-            }
-            else{
-                power = 0;
-            }
+            power = odo_PID.calculate(targetRelativeAngle, targetFieldAngle);
         }
-
+//        else{
+//            power = 0;
+//        }
         //power = Math.max(-1, Math.min(1, power));
+
+        // Limit Turret rotation
         if(targetTurretAngle > MAX_TURRET_ANGLE && power > 0){
             power = 0;
         }
@@ -328,7 +338,8 @@ public class AutoAimTurretCommand extends CommandBase {
         }
         scoringShooterSubsystem.setTurretPower(power);
 
-        // * * * * Light Indicators * * * *
+        // * * * * Light Indicators  * * * *
+        // * * * * * * * * * * * * * * * * *
         if ( (Math.abs(turretBearing) != 0) && (Math.abs(targetAngle - turretBearing) < TURRET_ANGLE_THRESHOLD)){
             counter = counter + 1;
         }
@@ -342,11 +353,10 @@ public class AutoAimTurretCommand extends CommandBase {
             counter = 0;
         }
 
-        // * * * * Update Telemetry * * * *
+        // * * * * Update Telemetry  * * * *
+        // * * * * * * * * * * * * * * * * *
         scoringShooterSubsystem.panelTelemetry(turretBearing, power, shooterPower, targetDistance, robotPose, targetRelativeAngle, currentEncoderAngle,
-                delta, totalEncoderAngle, lastEncoderAngle, totalTurretAngle, targetFieldAngle, turretAngleOffset, turretAngleOffset, targetTurretAngle);
-
-
+                delta, totalEncoderAngle, lastEncoderAngle, totalTurretAngle, targetFieldAngle, turretAngleOffset, turretAngleOffset, targetTurretAngle, robotResetAngle);
     }
 }
 
