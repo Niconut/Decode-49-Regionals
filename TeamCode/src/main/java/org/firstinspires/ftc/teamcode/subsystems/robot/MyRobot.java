@@ -37,6 +37,8 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.Shooter_Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands.AutoAimTurretCommand;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands.MoveScoringGateCommand;
 
+import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
+
 import com.bylazar.gamepad.PanelsGamepad;
 
 public class MyRobot extends Robot {
@@ -518,7 +520,7 @@ public class MyRobot extends Robot {
         else if (mode == TeleOpMode.BLUE){
             targetAngle = 1.50;
             shooterTime = new ElapsedTime();
-            drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
+            drive = new driveSubsystem(hardwareMap, PostStorage.currentPose);
             endgameKickstand = new Endgame_Kickstand(this);
             intakeSubsystem = new Intake_Subsystem(this);
             distanceSensor = new Distance_Sensor(this);

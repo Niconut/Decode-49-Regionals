@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.InstantFunction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -19,6 +21,8 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
+
+import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 
 @Configurable
 @Autonomous (name = "BLUE Solo Near 15", group = "Blue Alliance")
@@ -56,12 +60,14 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
         shooterSubsystem.setPower(0);
         buildTrajectories(drive, beginPose);
         waitForStart();
+        PostStorage.currentPose = drive.localizer.getPose();
         Actions.runBlocking(
                 new SequentialAction(
                         scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem)
                 )
 
         );
+        PostStorage.currentPose = drive.localizer.getPose();
     }
 
     private void buildTrajectories(MecanumDrive drive, Pose2d beginPose){
@@ -181,9 +187,9 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
                     scoringGate.OpenGate(),
                     new SleepAction(0.35),
                     FAR_SHOOT(intakeSubsystem),
-                    new SleepAction(0.75),
+                    new SleepAction(0.75)
 
-                    TrajectoryPark
+                    //TrajectoryPark
                 ),
                 shooterSubsystem.AutoAim()
         );
@@ -235,6 +241,7 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
                 intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.INIT)
         );
     }
+
 
 
 

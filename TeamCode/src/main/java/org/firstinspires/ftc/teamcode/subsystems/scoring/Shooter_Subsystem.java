@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems.scoring;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -68,7 +67,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         limelight = robot.hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
         servoTurret = robot.hardwareMap.get(CRServo.class, "ScoringTurret");    //  port 0
-        servoTurret.setDirection(CRServo.Direction.REVERSE);
+        servoTurret.setDirection(CRServo.Direction.FORWARD);
         LightRight = robot.hardwareMap.get(Servo.class, "LightRight");
         ScoringShooter = robot.hardwareMap.get(DcMotorEx.class, "ScoringShooter");
         this.ScoringShooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
