@@ -155,30 +155,50 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.update();
     }
 
-    public void panelTelemetry(double bearing, double power, double shootingPower, double distance, Pose2D robotPos, double targetAngle, double currentEndoderRads, double delta, double totalEncoderRads, double LastEncoderRads, double totalTurretRads, double targetFieldAngle, double turretAngleOffset, double turretStartingAngle, double targetTurretAngle, double robotResetAngle, double calTurretRelativeAngleOffset){
+    public void panelTelemetry(
+            double turretBearing,
+            double power,
+            double shooterPower,
+            double targetDistance,
+            Pose2D  robotPose,
+            double targetRelativeAngle,
+            double currentEncoderAngle,
+            double delta,
+            double totalEncoderAngle,
+            double lastEncoderAngle,
+            double totalTurretAngle,
+            double targetFieldAngle,
+            double turretAngleOffset,
+            double targetTurretAngle,
+            double robotResetAngle,
+            double calTurretRelativeAngleOffset,
+            double maxTurretnAngleLimitRight,
+            double turretZeroOffsetAngle
+){
         panelsTelemetry.addData("targetPower", power);
-        panelsTelemetry.addData("targetBearing", bearing);
-        panelsTelemetry.addData("shooterPower", shootingPower);
-        panelsTelemetry.addData("targetDistance", distance);
+        panelsTelemetry.addData("targetBearing", turretBearing);
+        panelsTelemetry.addData("shooterPower", shooterPower);
+        panelsTelemetry.addData("targetDistance", targetDistance);
         telemetry.addData("targetPower", power);
-        telemetry.addData("targetBearing", bearing);
-        telemetry.addData("shooterPower", shootingPower);
-        telemetry.addData("Distance", distance);
-        telemetry.addData("PosX", robotPos.getX(DistanceUnit.INCH));
-        telemetry.addData("PosY", robotPos.getY(DistanceUnit.INCH));
-        telemetry.addData("Heading", robotPos.getHeading(AngleUnit.RADIANS));
-        telemetry.addData("lastEncoderAngle", LastEncoderRads);
-        telemetry.addData("currentEncoderAngle", currentEndoderRads);
-        telemetry.addData("delta", delta);
-        telemetry.addData("totalEncoderAngle", totalEncoderRads);
-        telemetry.addData("totalTurretAngle", totalTurretRads);
-        telemetry.addData("targetFieldAngle", targetFieldAngle);
-        telemetry.addData("targetRelativeAngle", targetAngle);
-        telemetry.addData("turretAngleOffset", turretAngleOffset);
-        telemetry.addData("turretStartingAngle", turretStartingAngle);
-        telemetry.addData("targetTurretAngle", targetTurretAngle);
+        telemetry.addData("targetBearing", turretBearing);
+        telemetry.addData("shooterPower", shooterPower);
+        telemetry.addData("Distance", targetDistance);
+        telemetry.addData("PosX", robotPose.getX(DistanceUnit.INCH));
+        telemetry.addData("PosY", robotPose.getY(DistanceUnit.INCH));
+        telemetry.addData("Heading", robotPose.getHeading(AngleUnit.RADIANS));
         telemetry.addData("robotRestAngle", robotResetAngle);
+        telemetry.addData("lastEncoderAngle", lastEncoderAngle);
+        telemetry.addData("currentEncoderAngle", currentEncoderAngle);
+        telemetry.addData("delta", delta);
+        telemetry.addData("totalEncoderAngle", totalEncoderAngle);
+        telemetry.addData("totalTurretAngle", totalTurretAngle);
+        telemetry.addData("targetFieldAngle", targetFieldAngle);
+        telemetry.addData("targetTurretAngle", targetTurretAngle);
+        telemetry.addData("targetRelativeAngle", targetRelativeAngle);
+        telemetry.addData("turretZeroOffsetAngle", turretZeroOffsetAngle);
         telemetry.addData("calTurretRelativeAngleOffset", calTurretRelativeAngleOffset);
+        telemetry.addData("turretAngleOffset", turretAngleOffset);
+
         telemetry.update();
         panelsTelemetry.update();
     }
