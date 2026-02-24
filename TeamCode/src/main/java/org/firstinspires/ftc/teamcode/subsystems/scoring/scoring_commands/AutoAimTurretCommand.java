@@ -121,7 +121,7 @@ public class AutoAimTurretCommand extends CommandBase {
     private double calTurretRelativeAngle = 0;
     private double calTurretRelativeAngleOffset = 0;
     private boolean initStates = false;
-    private boolean turretOdoAutoAimEnabled = true;
+    private boolean turretOdoAutoAimEnabled = false;
     private double turretAbsoluteAngle = 0;
     private double turretZeroOffsetAngle = 0;
 
