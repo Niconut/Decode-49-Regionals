@@ -1,6 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+
 public class Constants {
+    public static class FinalAutoTrajectories {
+        public static final Vector2d robotEndPosBlue = new Vector2d(-34,-16);
+    }
 
     public double DRIVE_NORMAL_SCALE = 1;
     public double STRAFE_NORMAL_SCALE = 1;

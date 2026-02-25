@@ -16,34 +16,24 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Actions.Intake_Subsystem_Action;
+import org.firstinspires.ftc.teamcode.subsystems.scoring.Scoring_Gate;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Gate_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Constants.FinalAutoTrajectories;
 
 @Configurable
 @Autonomous (name = "BLUE Duo Near 15", group = "Blue Alliance")
 public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
 
     private MecanumDrive drive;
-    Action TrajectoryShootBallsAndPrep,
-            TrajectoryGateBackUp,
-            TrajectoryShootBalls3,
-            TrajectoryBackPickUp,
-            TrajectoryFrontPickUp,
-            TrajectoryPark;
-
-
-    public static Vector2d firstScore = new Vector2d(0,-16);
-    public static Vector2d midPickupPrep = new Vector2d(14,-30);
-    public static double midPickup = -54;
-    public static Vector2d shootPrep1 = new Vector2d(14,-30);
-    public static Vector2d secondScore = new Vector2d(-16,-20);
-    public static Vector2d frontPrep = new Vector2d(-11, -32);
-    public static double frontPickup = -50;
-    public static Vector2d fifthScorePrep = new Vector2d(-11,-30);
-    public static Vector2d fifthScore = new Vector2d(-16,-20);
-
+    Action TrajectoryRoute1,
+            TrajectoryRoute2,
+            TrajectoryRoute3,
+            TrajectoryRoute4,
+            TrajectoryRoute5,
+            TrajectoryRoute6;
 
     public void runOpMode() throws InterruptedException{
         Pose2d beginPose = new Pose2d(-40, -57, Math.toRadians(-90));
@@ -62,14 +52,13 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
                 new SequentialAction(
                         scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem)
                 )
-
         );
         PostStorage.currentPose = drive.localizer.getPose();
     }
 
     private void buildTrajectories(MecanumDrive drive, Pose2d beginPose){
         // preload and pickup mid
-        TrajectoryActionBuilder trajectoryShootBallsandPickup = drive.actionBuilder(beginPose)
+        TrajectoryActionBuilder trajectoryRoute1 = drive.actionBuilder(beginPose) // preload and pickup MID and open gate
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(0,-16), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(15,-30), Math.toRadians(-90))
@@ -80,7 +69,7 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-4,-30), Math.toRadians(90), new TranslationalVelConstraint(70))
                 .splineToConstantHeading(new Vector2d(-12,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryGateBackUp = trajectoryShootBallsandPickup.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryRoute2 = trajectoryRoute1.endTrajectory().fresh() // pickup CLOSE and open gate
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(-7, -32), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 .setReversed(false)
@@ -89,7 +78,7 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(4,-58), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 .splineToConstantHeading(new Vector2d(-16,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryShootBalls3 = trajectoryGateBackUp.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryRoute3 = trajectoryRoute2.endTrajectory().fresh() // pickup FAR
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(36, -30), Math.toRadians(-90), new TranslationalVelConstraint(40))
                 .lineToY(-60, new TranslationalVelConstraint(40))
@@ -97,28 +86,28 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(10, -30), Math.toRadians(-180))
                 .splineToConstantHeading(new Vector2d(-12, -20), Math.toRadians(-90));
 
-        TrajectoryActionBuilder trajectoryFrontPickUp = trajectoryShootBalls3.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryRoute4 = trajectoryRoute3.endTrajectory().fresh() // pickup G
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(30, -30), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToConstantHeading(new Vector2d(20,-62), Math.toRadians(-90), new TranslationalVelConstraint(70))
-                .splineToConstantHeading(new Vector2d(16,-48), Math.toRadians(-90), new TranslationalVelConstraint(30))
-                .splineToConstantHeading(new Vector2d(14,-62), Math.toRadians(-90), new TranslationalVelConstraint(30))
-                .splineToConstantHeading(new Vector2d(-4,-30), Math.toRadians(90), new TranslationalVelConstraint(70))
-                .splineToConstantHeading(new Vector2d(-12,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
+                .splineToConstantHeading(new Vector2d(16,-62), Math.toRadians(-90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(20,-48), Math.toRadians(-90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(24,-62), Math.toRadians(-90), new TranslationalVelConstraint(30))
+                //.splineToConstantHeading(new Vector2d(-4,-30), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(FinalAutoTrajectories.robotEndPosBlue, Math.toRadians(-90), new TranslationalVelConstraint(70));
 
 
-        TrajectoryActionBuilder trajectoryBackPickUp = trajectoryFrontPickUp.endTrajectory().fresh()
-                .splineToConstantHeading(new Vector2d(8, -40), Math.toRadians(90));
+        TrajectoryActionBuilder trajectoryRoute5 = trajectoryRoute4.endTrajectory().fresh()
+                .splineToConstantHeading(new Vector2d(-33, -16), Math.toRadians(90));
 
-        TrajectoryActionBuilder trajectoryPark = trajectoryBackPickUp.endTrajectory().fresh()
-                .splineToConstantHeading(new Vector2d(9, -41), Math.toRadians(90));
+        TrajectoryActionBuilder trajectoryRoute6 = trajectoryRoute5.endTrajectory().fresh()
+                .splineToConstantHeading(new Vector2d(-32, -16), Math.toRadians(90));
 
-        TrajectoryShootBallsAndPrep = trajectoryShootBallsandPickup.build();
-        TrajectoryShootBalls3 = trajectoryShootBalls3.build();
-        TrajectoryGateBackUp = trajectoryGateBackUp.build();
-        TrajectoryBackPickUp = trajectoryBackPickUp.build();
-        TrajectoryFrontPickUp = trajectoryFrontPickUp.build();
-        TrajectoryPark = trajectoryPark.build();
+        TrajectoryRoute1 = trajectoryRoute1.build();
+        TrajectoryRoute3 = trajectoryRoute3.build();
+        TrajectoryRoute2 = trajectoryRoute2.build();
+        TrajectoryRoute4 = trajectoryRoute5.build();
+        TrajectoryRoute5 = trajectoryRoute4.build();
+        TrajectoryRoute6 = trajectoryRoute6.build();
     }
 
     public Action spinShooter(Scoring_Shooter_Action scoringShooter){
@@ -141,69 +130,59 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
 
                     // score preload then pickup first set of artifacts
                     new ParallelAction(
-                        TrajectoryShootBallsAndPrep,
+                        TrajectoryRoute1,
+                        SHOOT_PRELOAD(intakeSubsystem, scoringGate, scoringShooter, distanceSensor)
+                    ),
+                    // shoot
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                    new ParallelAction(
+                        TrajectoryRoute2,
                         new SequentialAction(
-                            new SleepAction(0.75),
-                            SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                            new SleepAction(0.75),
-                            scoringGate.CloseGate(),
-                            scoringShooter.CloseShooter2(),
-                            INTAKE(intakeSubsystem, distanceSensor)
+                            new SleepAction(0.5),
+                            FAST_INTAKE(intakeSubsystem, distanceSensor)
                         )
                     ),
-                    // shoot
-                    scoringGate.OpenGate(),
-                    new SleepAction(0.35),
-                    SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                    new SleepAction(0.5),
-                    scoringGate.CloseGate(),
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
                     new ParallelAction(
-                            TrajectoryGateBackUp,
-                            new SequentialAction(
-                                    new SleepAction(0.5),
-                                FAST_INTAKE(intakeSubsystem, distanceSensor)
-                            )
+                            TrajectoryRoute3,
+                            FAST_INTAKE(intakeSubsystem, distanceSensor)
                     ),
-                    // shoot
-                    scoringGate.OpenGate(),
-                    new SleepAction(0.35),
-                    SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                    new SleepAction(0.5),
-                    scoringGate.CloseGate(),
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
                     new ParallelAction(
-                            TrajectoryShootBalls3,
-                            scoringShooter.CloseShooter2()
-                    ),
-                    scoringGate.OpenGate(),
-                    new SleepAction(0.35),
-                    SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                    new SleepAction(0.5),
-                    // pickup 2nd set
-                    scoringGate.CloseGate(),
-                    new ParallelAction(
-                        TrajectoryFrontPickUp,
+                        TrajectoryRoute5,
                         FAST_INTAKE(intakeSubsystem, distanceSensor)
                     ),
-                    scoringGate.OpenGate(),
-                    new SleepAction(0.35),
-                    SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                    new SleepAction(0.5),
-                    // pickup 3rd set
-                    scoringGate.CloseGate(),
-                    TrajectoryBackPickUp,
-                    TrajectoryPark
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate)
+//                    TrajectoryRoute4,
+//                    TrajectoryRoute6
                 ),
                 shooterSubsystem.AutoAim()
         );
     }
 
-    public Action SHOOT_REAR_MID_FRONT(Intake_Subsystem_Action intakeSubsystem){
+    public Action SHOOT_PRELOAD(Intake_Subsystem_Action intakeSubsystem, Scoring_Gate_Action scoringGate, Scoring_Shooter_Action scoringShooter, Distance_Sensor_Action distanceSensor){
         return new SequentialAction(
-                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE)
+                new SleepAction(0.75),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE),
+                new SleepAction(0.75),
+                scoringGate.CloseGate(),
+                scoringShooter.CloseShooter2(),
+                INTAKE(intakeSubsystem, distanceSensor)
         );
     }
 
-    public Action FAR_SHOOT(Intake_Subsystem_Action intakeSubsystem){
+
+    public Action SHOOT_CLOSE(Intake_Subsystem_Action intakeSubsystem, Scoring_Gate_Action scoringGate){
+        return new SequentialAction(
+                scoringGate.OpenGate(),
+                new SleepAction(0.35),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE),
+                new SleepAction(0.5),
+                scoringGate.CloseGate()
+        );
+    }
+
+    public Action SHOOT_FAR(Intake_Subsystem_Action intakeSubsystem){
         return new SequentialAction(
                 intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FARSHOOT)
         );

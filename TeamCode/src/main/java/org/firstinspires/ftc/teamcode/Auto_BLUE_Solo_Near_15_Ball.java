@@ -98,11 +98,11 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
 
 
         TrajectoryActionBuilder trajectoryBackPickUp = trajectoryFrontPickUp.endTrajectory().fresh()
-                .splineToConstantHeading(new Vector2d(36, -30), Math.toRadians(-90))
-                .lineToY(-60)
+                .splineToConstantHeading(new Vector2d(36, -30), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .lineToY(-60, new TranslationalVelConstraint(40))
                 .splineToConstantHeading(new Vector2d(36,-46), Math.toRadians(90))
                 .splineToConstantHeading(new Vector2d(0, -22), Math.toRadians(-180))
-                .splineToConstantHeading(new Vector2d(-36, -20), Math.toRadians(-90));
+                .splineToConstantHeading(new Vector2d(-16, -20), Math.toRadians(-90));
 
         TrajectoryActionBuilder trajectoryPark = trajectoryBackPickUp.endTrajectory().fresh()
                 .splineToConstantHeading(new Vector2d(8, -40), Math.toRadians(90));
@@ -187,9 +187,9 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
                     scoringGate.OpenGate(),
                     new SleepAction(0.35),
                     FAR_SHOOT(intakeSubsystem),
-                    new SleepAction(0.75)
+                    new SleepAction(0.75),
 
-                    //TrajectoryPark
+                    TrajectoryPark
                 ),
                 shooterSubsystem.AutoAim()
         );
