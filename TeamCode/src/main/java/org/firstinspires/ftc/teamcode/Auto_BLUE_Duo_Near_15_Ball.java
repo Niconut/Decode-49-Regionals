@@ -16,7 +16,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Actions.Intake_Subsystem_Action;
-import org.firstinspires.ftc.teamcode.subsystems.scoring.Scoring_Gate;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Gate_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Subsystem_Action;
@@ -93,7 +92,7 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(20,-48), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 .splineToConstantHeading(new Vector2d(24,-62), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 //.splineToConstantHeading(new Vector2d(-4,-30), Math.toRadians(90), new TranslationalVelConstraint(70))
-                .splineToConstantHeading(FinalAutoTrajectories.robotEndPosBlue, Math.toRadians(-90), new TranslationalVelConstraint(70));
+                .splineToConstantHeading(FinalAutoTrajectories.robotEndPosBlue_B, Math.toRadians(-90), new TranslationalVelConstraint(70));
 
 
         TrajectoryActionBuilder trajectoryRoute5 = trajectoryRoute4.endTrajectory().fresh()

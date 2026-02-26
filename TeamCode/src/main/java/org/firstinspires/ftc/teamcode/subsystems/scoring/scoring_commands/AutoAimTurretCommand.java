@@ -18,8 +18,6 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.Shooter_Subsystem;
 
 import org.firstinspires.ftc.teamcode.subsystems.Constants.FinalAutoTrajectories;
 
-import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
-
 import static java.lang.Math.PI;
 import static java.lang.Math.atan2;
 
@@ -88,10 +86,14 @@ public class AutoAimTurretCommand extends CommandBase {
     private double robotResetPosYBlue = 64;
     private double robotResetPosXRed = 64;
     private double robotResetPosYRed = -64;
-    private double robotResetPosXBlue_B = FinalAutoTrajectories.robotEndPosBlue.x;
-    private double robotResetPosYBlue_B = FinalAutoTrajectories.robotEndPosBlue.y;
-    private double robotResetPosXRed_B = FinalAutoTrajectories.robotEndPosRed.x;
-    private double robotResetPosYRed_B = FinalAutoTrajectories.robotEndPosRed.y;
+    private double robotResetPosXBlue_B = FinalAutoTrajectories.robotEndPosBlue_B.x;
+    private double robotResetPosYBlue_B = FinalAutoTrajectories.robotEndPosBlue_B.y;
+    private double robotResetPosXRed_B = FinalAutoTrajectories.robotEndPosRed_B.x;
+    private double robotResetPosYRed_B = FinalAutoTrajectories.robotEndPosRed_B.y;
+    private double robotResetPosXBlue_A = FinalAutoTrajectories.robotEndPosBlue_A.x;
+    private double robotResetPosYBlue_A = FinalAutoTrajectories.robotEndPosBlue_A.y;
+    private double robotResetPosXRed_A = FinalAutoTrajectories.robotEndPosRed_A.x;
+    private double robotResetPosYRed_A = FinalAutoTrajectories.robotEndPosRed_A.y;
     private double robotResetAngleBlue = 90;
     private double robotResetAngleRed = 270;
     private double robotResetAngle = 0;
@@ -327,33 +329,28 @@ public class AutoAimTurretCommand extends CommandBase {
 
         // * * * * Reset Robot position * * * *
         if ((robot.driver.getButton(GamepadKeys.Button.B))){
-//            if (team == Team.Blue) {
-//                robotResetPosX = robotResetPosXBlue_B;
-//                robotResetPosY = robotResetPosYBlue_B;
-//                robotResetAngle = robotResetAngleBlue;
-//            }
-//            if (team == Team.Red) {
-//                robotResetPosX = robotResetPosXRed_B;
-//                robotResetPosY = robotResetPosYRed_B;
-//                robotResetAngle = robotResetAngleRed;
-//            }
             if (team == Team.Blue) {
-                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXBlue_B, robotResetPosYBlue_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
-                odo.update();
-
-                calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (totalTurretAngle));
-
-                turretOdoAutoAimEnabled = true;
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXBlue_B, robotResetPosYBlue_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngleBlue)));
             }
-            if (team == Team.Red){
-                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXRed_B, robotResetPosYRed_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
-                odo.update();
-
-                calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (totalTurretAngle));
-
-                turretOdoAutoAimEnabled = true;
+            if (team == Team.Red) {
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXRed_B, robotResetPosYRed_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngleRed)));
             }
+                odo.update();
+                calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (totalTurretAngle));
+                turretOdoAutoAimEnabled = true;
          }
+
+        if ((robot.driver.getButton(GamepadKeys.Button.A))){
+            if (team == Team.Blue) {
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXBlue_A, robotResetPosYBlue_A, AngleUnit.RADIANS, Math.toRadians(robotResetAngleBlue)));
+            }
+            if (team == Team.Red) {
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXRed_A, robotResetPosYRed_A, AngleUnit.RADIANS, Math.toRadians(robotResetAngleRed)));
+            }
+            odo.update();
+            calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (totalTurretAngle));
+            turretOdoAutoAimEnabled = true;
+        }
 
         if ((robot.driver.getButton(GamepadKeys.Button.START)) || (robot.operator.getButton(GamepadKeys.Button.START))){
             turretOdoAutoAimEnabled = false;

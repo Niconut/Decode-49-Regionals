@@ -91,7 +91,7 @@ public class Auto_BLUE_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-7, -32), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 .setReversed(false)
                 .splineToConstantHeading(new Vector2d(-5,-58), Math.toRadians(-90), new TranslationalVelConstraint(70))
-                .splineToConstantHeading(FinalAutoTrajectories.robotEndPosBlue, Math.toRadians(-90), new TranslationalVelConstraint(70));
+                .splineToConstantHeading(FinalAutoTrajectories.robotEndPosBlue_B, Math.toRadians(-90), new TranslationalVelConstraint(70));
 
         TrajectoryRoute1 = trajectoryRoute1.build();
         TrajectoryRoute2 = trajectoryRoute2.build();
