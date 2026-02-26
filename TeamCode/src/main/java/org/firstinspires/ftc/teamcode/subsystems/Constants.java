@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 public class Constants {
     public static class FinalAutoTrajectories {
         public static final Vector2d robotEndPosBlue = new Vector2d(-34,-16);
+        public static final Vector2d robotEndPosRed = new Vector2d(-34,16);
     }
 
     public double DRIVE_NORMAL_SCALE = 1;
