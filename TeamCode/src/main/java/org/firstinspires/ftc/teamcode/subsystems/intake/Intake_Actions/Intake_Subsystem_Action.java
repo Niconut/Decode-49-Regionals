@@ -37,7 +37,7 @@ public class Intake_Subsystem_Action{
 
     public enum IntakeMode {
         INIT(0, 0, 0),
-        FARSHOOT(0.75, 0.75, -0.6),
+        FARSHOOT(0.5, 0.5, -0.6),
 
         OFF_OFF_FORWARD(0, 0, 1),
         OFF_OFF_REVERSE(0, 0, -1),

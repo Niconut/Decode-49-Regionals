@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.bylazar.configurables.annotations.Configurable;
@@ -54,39 +53,38 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
     private void buildTrajectories(MecanumDrive drive, Pose2d beginPose){
 
         TrajectoryActionBuilder trajectoryFarSpikePickUp = drive.actionBuilder(beginPose)
-                .setReversed(true)
                 .splineToConstantHeading(new Vector2d(36, 30), Math.toRadians(90))
-                .lineToY(58, new TranslationalVelConstraint(70))
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(50, 18), Math.toRadians(90));
+                .lineToY(60)
+                .splineToConstantHeading(new Vector2d(36,46), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(56, 16), Math.toRadians(0));
 
         TrajectoryActionBuilder trajectoryHumanPickUp1 = trajectoryFarSpikePickUp.endTrajectory().fresh()
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,66), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(66,52), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(68,70), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(50,18), Math.toRadians(90));
+                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(66,50), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
+                .lineToY(16);
 
         TrajectoryActionBuilder trajectoryHumanPickup2 = trajectoryHumanPickUp1.endTrajectory().fresh()
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,66), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(66,52), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(68,70), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(50,18), Math.toRadians(90));
+                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(66,50), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
+                .lineToY(16);
 
         TrajectoryActionBuilder trajectoryHumanPickup3 = trajectoryHumanPickup2.endTrajectory().fresh()
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,67), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(66,52), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(68,70), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(50,18), Math.toRadians(90));
+                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(66,50), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
+                .lineToY(16);
 
         TrajectoryActionBuilder trajectoryHumanPickup4 = trajectoryHumanPickup3.endTrajectory().fresh()
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,66), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(62,52), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(68,70), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(50,18), Math.toRadians(90));
+                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(62,50), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
+                .lineToY(16);
 
         TrajectoryActionBuilder trajectoryPark = trajectoryHumanPickup4.endTrajectory().fresh()
                 .splineToConstantHeading(new Vector2d(36, 48), Math.toRadians(-90));
@@ -115,12 +113,12 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                 new SequentialAction(
                         // shoot preload
                         scoringGate.OpenGate(),
-                        scoringShooter.FartherShooter(),
+                        scoringShooter.FarShooter(),
                         new SleepAction(2.5),
                         FAR_SHOOT(intakeSubsystem),
                         new SleepAction(0.75),
                         scoringGate.CloseGate(),
-                        scoringShooter.FarShooter(),
+                        scoringShooter.FartherShooter(),
 
                         // pickup furthest spike mark and go to shooting zone
                         new ParallelAction(
@@ -129,7 +127,7 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                         ),
 
                         // shoot
-                        new SleepAction(0.1),
+//                        new SleepAction(0.1),
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
@@ -146,11 +144,11 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                         ),
 
                         // shoot
-                        new SleepAction(0.05),
+//                        new SleepAction(0.05),
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.65),
+                        new SleepAction(0.5),
                         scoringGate.CloseGate(),
 
                         // pickup from human player then go to shooting zone
@@ -163,11 +161,11 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                         ),
 
                         // shoot
-                        new SleepAction(0.05),
+//                        new SleepAction(0.05),
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.65),
+                        new SleepAction(0.5),
                         scoringGate.CloseGate(),
 
                         // pickup from human player then go to shooting zone
@@ -180,7 +178,7 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                         ),
 
                         // shoot
-                        new SleepAction(0.05),
+//                        new SleepAction(0.05),
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
@@ -197,7 +195,7 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                         ),
 
                         // shoot
-                        new SleepAction(0.05),
+//                        new SleepAction(0.05),
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),

@@ -20,12 +20,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
     public static double ki = 0.0 ;
     public static double kd = 0.0 ;
 
+    private double targettx;
+
     public enum Pipeline {
         RED,
         BLUE
     }
 
+      private final Pipeline team;
+
     public Shooter_Subsystem_Action(HardwareMap hardwareMap, Pipeline team){
+        this.team = team;
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
         servoTurret = hardwareMap.get(CRServo.class, "ScoringTurret");    //  port 0
@@ -58,8 +63,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 double[] turretProp =  {bearingAprilTag, rangeAprilTag};
                 turretBearing = (turretProp[0]);
                 double turretRange = (turretProp[1]);
-
-                double targettx = 0;
+                if (team == Pipeline.BLUE) {
+                    targettx = -1.5;
+                } else if (team == Pipeline.RED){
+                    targettx = 1.5;
+                }
 
                 double error = turretBearing - targettx;
 

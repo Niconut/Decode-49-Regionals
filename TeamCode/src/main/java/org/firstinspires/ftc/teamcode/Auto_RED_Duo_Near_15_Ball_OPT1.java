@@ -1,0 +1,226 @@
+package org.firstinspires.ftc.teamcode;
+
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.subsystems.Constants.FinalAutoTrajectories;
+import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
+import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Actions.Intake_Subsystem_Action;
+import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Gate_Action;
+import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
+import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Subsystem_Action;
+import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
+
+@Configurable
+@Autonomous (name = "RED Duo Near 15 OPT 1", group = "Red Alliance")
+public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
+
+    private MecanumDrive drive;
+    Action TrajectoryRoute1,
+            TrajectoryRoute2,
+            TrajectoryRoute3,
+            TrajectoryRoute4,
+            TrajectoryRoute5,
+            TrajectoryRoute6;
+
+    public void runOpMode() throws InterruptedException{
+        Pose2d beginPose = new Pose2d(-40, 57, Math.toRadians(90));
+        drive = new MecanumDrive(hardwareMap, beginPose);
+        Scoring_Shooter_Action scoringShooter = new Scoring_Shooter_Action(hardwareMap);
+        Intake_Subsystem_Action intakeSubsystem = new Intake_Subsystem_Action(hardwareMap);
+        Distance_Sensor_Action distanceSensor = new Distance_Sensor_Action(hardwareMap);
+        Scoring_Gate_Action scoringGate = new Scoring_Gate_Action(hardwareMap);
+        Shooter_Subsystem_Action shooterSubsystem = new Shooter_Subsystem_Action(hardwareMap, Shooter_Subsystem_Action.Pipeline.RED);
+
+        shooterSubsystem.setPower(0);
+        buildTrajectories(drive, beginPose);
+        waitForStart();
+        PostStorage.currentPose = drive.localizer.getPose();
+        Actions.runBlocking(
+                new SequentialAction(
+                        scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem)
+                )
+        );
+        PostStorage.currentPose = drive.localizer.getPose();
+    }
+
+    private void buildTrajectories(MecanumDrive drive, Pose2d beginPose){
+        // preload and pickup mid
+        TrajectoryActionBuilder trajectoryRoute1 = drive.actionBuilder(beginPose) // preload and pickup MID and open gate
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(0,16), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(15,30), Math.toRadians(90))
+                .setReversed(false)
+                .splineToConstantHeading(new Vector2d(13,58), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(10,46), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(0,58), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(-4,36), Math.toRadians(-90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(-12,20), Math.toRadians(90), new TranslationalVelConstraint(70));
+
+        TrajectoryActionBuilder trajectoryRoute2= trajectoryRoute1.endTrajectory().fresh() //Gate Open
+                .splineToConstantHeading(new Vector2d(-0, 28), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(7,54), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(20, 64, Math.toRadians(120)), Math.toRadians(90));
+
+        TrajectoryActionBuilder trajectoryRoute3 = trajectoryRoute2.endTrajectory().fresh() // Shoot Gate Balls
+                .splineToLinearHeading(new Pose2d(16, 54, Math.toRadians(90)), Math.toRadians(90))
+                .splineToConstantHeading(new Vector2d(12,36), Math.toRadians(-90))
+                .splineToConstantHeading(new Vector2d(-12,20), Math.toRadians(90), new TranslationalVelConstraint(70));
+
+        TrajectoryActionBuilder trajectoryRoute4 = trajectoryRoute3.endTrajectory().fresh() // pickup G
+                .setReversed(false)
+                .splineToConstantHeading(new Vector2d(30, 30), Math.toRadians(90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(16,62), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(20,48), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(24,62), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(-12,20), Math.toRadians(90), new TranslationalVelConstraint(70));
+
+        TrajectoryActionBuilder trajectoryRoute5 = trajectoryRoute4.endTrajectory().fresh() // pickup CLOSE and open gate
+                .setReversed(true)
+                .splineToConstantHeading(new Vector2d(-7, 32), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .setReversed(false)
+                .splineToConstantHeading(new Vector2d(-5,58), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(FinalAutoTrajectories.robotEndPosRed_B, Math.toRadians(90), new TranslationalVelConstraint(70));
+
+        TrajectoryRoute1 = trajectoryRoute1.build();
+        TrajectoryRoute2 = trajectoryRoute2.build();
+        TrajectoryRoute3 = trajectoryRoute3.build();
+        TrajectoryRoute4 = trajectoryRoute4.build();
+        TrajectoryRoute5 = trajectoryRoute5.build();
+//        TrajectoryRoute6 = trajectoryRoute6.build();
+    }
+
+    public Action spinShooter(Scoring_Shooter_Action scoringShooter){
+        return new SequentialAction(
+                scoringShooter.ShootBalls()
+        );
+    }
+    public Action scorePreload(Scoring_Shooter_Action scoringShooter,
+                               Intake_Subsystem_Action intakeSubsystem,
+                                Distance_Sensor_Action distanceSensor,
+                                Scoring_Gate_Action scoringGate,
+                               Shooter_Subsystem_Action shooterSubsystem){
+
+        return
+        new ParallelAction(
+                    new SequentialAction(
+                    scoringGate.OpenGate(),
+                    scoringShooter.ShootBalls(),
+                    new SleepAction(0.5),
+
+                    // score preload then pickup first set of artifacts
+                    new ParallelAction(
+                        TrajectoryRoute1,
+                        SHOOT_PRELOAD(intakeSubsystem, scoringGate, scoringShooter, distanceSensor)
+                    ),
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                    new ParallelAction(
+                            TrajectoryRoute2,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    FAST_INTAKE(intakeSubsystem, distanceSensor)
+                            )
+                    ),
+                    new ParallelAction(
+                            TrajectoryRoute3,
+                            scoringShooter.CloseShooter2()
+                    ),
+                    // shoot
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                    new ParallelAction(
+                        TrajectoryRoute4,
+                        FAST_INTAKE(intakeSubsystem, distanceSensor)
+                    ),
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                    new ParallelAction(
+                            TrajectoryRoute5,
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                    FAST_INTAKE(intakeSubsystem, distanceSensor)
+                            )
+                    ),
+                    SHOOT_CLOSE(intakeSubsystem, scoringGate)
+//                    TrajectoryRoute4,
+//                    TrajectoryRoute6
+                ),
+                shooterSubsystem.AutoAim()
+        );
+    }
+
+    public Action SHOOT_PRELOAD(Intake_Subsystem_Action intakeSubsystem, Scoring_Gate_Action scoringGate, Scoring_Shooter_Action scoringShooter, Distance_Sensor_Action distanceSensor){
+        return new SequentialAction(
+                new SleepAction(0.75),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE),
+                new SleepAction(0.75),
+                scoringGate.CloseGate(),
+                scoringShooter.CloseShooter2(),
+                INTAKE(intakeSubsystem, distanceSensor)
+        );
+    }
+
+    public Action SHOOT_CLOSE(Intake_Subsystem_Action intakeSubsystem, Scoring_Gate_Action scoringGate){
+        return new SequentialAction(
+                scoringGate.OpenGate(),
+                new SleepAction(0.35),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE),
+                new SleepAction(0.5),
+                scoringGate.CloseGate()
+        );
+    }
+
+    public Action SHOOT_FAR(Intake_Subsystem_Action intakeSubsystem){
+        return new SequentialAction(
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FARSHOOT)
+        );
+    }
+
+    public Action INTAKE(Intake_Subsystem_Action intakeSubsystem, Distance_Sensor_Action distanceSensor){
+        return new SequentialAction(
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE),
+                distanceSensor.ShootTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_OFF),
+                distanceSensor.RearTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_OFF_OFF),
+                distanceSensor.FrontTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.INIT)
+        );
+    }
+    public Action FAST_INTAKE(Intake_Subsystem_Action intakeSubsystem, Distance_Sensor_Action distanceSensor){
+        return new SequentialAction(
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE),
+                distanceSensor.ShootTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FASTFORWARD_FASTFORWARD_OFF),
+                distanceSensor.RearTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_OFF_OFF),
+                distanceSensor.FrontTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.INIT)
+        );
+    }
+
+    public Action SLOW_INTAKE(Intake_Subsystem_Action intakeSubsystem, Distance_Sensor_Action distanceSensor){
+        return new SequentialAction(
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE),
+                distanceSensor.ShootTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.SLOWFORWARD_SLOWFORWARD_OFF),
+                distanceSensor.RearTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_OFF_OFF),
+                distanceSensor.FrontTriggered(),
+                intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.INIT)
+        );
+    }
+
+
+
+
+}
