@@ -94,6 +94,10 @@ public class AutoAimTurretCommand extends CommandBase {
     private double robotResetPosYBlue_A = FinalAutoTrajectories.robotEndPosBlue_A.y;
     private double robotResetPosXRed_A = FinalAutoTrajectories.robotEndPosRed_A.x;
     private double robotResetPosYRed_A = FinalAutoTrajectories.robotEndPosRed_A.y;
+    private double robotResetPosXBlue_Y = FinalAutoTrajectories.robotEndPosBlue_Y.x;
+    private double robotResetPosYBlue_Y = FinalAutoTrajectories.robotEndPosBlue_Y.y;
+    private double robotResetPosXRed_Y = FinalAutoTrajectories.robotEndPosRed_Y.x;
+    private double robotResetPosYRed_Y = FinalAutoTrajectories.robotEndPosRed_Y.y;
     private double robotResetAngleBlue = 90;
     private double robotResetAngleRed = 270;
     private double robotResetAngle = 0;
@@ -352,6 +356,18 @@ public class AutoAimTurretCommand extends CommandBase {
             turretOdoAutoAimEnabled = true;
         }
 
+        if ((robot.driver.getButton(GamepadKeys.Button.Y))){
+            if (team == Team.Blue) {
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXBlue_Y, robotResetPosYBlue_Y, AngleUnit.RADIANS, Math.toRadians(robotResetAngleBlue)));
+            }
+            if (team == Team.Red) {
+                odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXRed_Y, robotResetPosYRed_Y, AngleUnit.RADIANS, Math.toRadians(robotResetAngleRed)));
+            }
+            odo.update();
+            calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (totalTurretAngle));
+            turretOdoAutoAimEnabled = true;
+        }
+
         if ((robot.driver.getButton(GamepadKeys.Button.START)) || (robot.operator.getButton(GamepadKeys.Button.START))){
             turretOdoAutoAimEnabled = false;
         }
@@ -365,15 +381,10 @@ public class AutoAimTurretCommand extends CommandBase {
         // Manual Method Priority 1
         else if (Math.abs(turretSupplier.getAsDouble()) > TURRET_MANUAL_CONTROL_THRESHOLD) {
             power = 0.5 * turretSupplier.getAsDouble();
-            if((turretAbsoluteAngle > 1.4) && power > 0){
-                power = 0;
-            }
-            if((turretAbsoluteAngle < -1.4) && power < 0){
-                power = 0;
-            }
         }
         // Odometry Method Priority 3
         else if (turretOdoAutoAimEnabled){
+            odo_PID = new PIDController(odo_kp, odo_ki, odo_kd);
             power = odo_PID.calculate(targetRelativeAngle, targetFieldAngle);
             if((turretAbsoluteAngle > 1.4) && power > 0){
                 power = 0;

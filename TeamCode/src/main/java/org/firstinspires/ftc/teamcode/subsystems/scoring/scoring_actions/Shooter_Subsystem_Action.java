@@ -72,6 +72,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 double error = turretBearing - targettx;
 
                 double power = PID.calculate(-turretBearing, targettx);
+
+                // angle limit
+
+
                 //kp * error;
                 servoTurret.setPower(power);
             }
