@@ -177,7 +177,9 @@ public class Shooter_Subsystem extends SubsystemBase {
             double robotResetAngle,
             double calTurretRelativeAngleOffset,
             double maxTurretnAngleLimitRight,
-            double turretZeroOffsetAngle
+            double turretZeroOffsetAngle,
+            Pose2d autoEndPosition,
+            double turretEndAngle
 ){
         panelsTelemetry.addData("targetPower", power);
         panelsTelemetry.addData("targetBearing", turretBearing);
@@ -202,6 +204,8 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.addData("turretZeroOffsetAngle", turretZeroOffsetAngle);
         telemetry.addData("calTurretRelativeAngleOffset", calTurretRelativeAngleOffset);
         telemetry.addData("turretAbsoluteAngle", turretAbsoluteAngle);
+        telemetry.addData("autoEndPosition", autoEndPosition);
+        telemetry.addData("turretAutoEndAngle", turretEndAngle);
 
         telemetry.update();
         panelsTelemetry.update();

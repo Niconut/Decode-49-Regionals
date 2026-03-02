@@ -13,6 +13,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Odom_Storage_Action;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Turret_Analog_Input_Action;
@@ -103,7 +104,7 @@ public class Auto_RED_Solo_Near_15_Ball extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(-16, 20), Math.toRadians(90));
 
         TrajectoryActionBuilder trajectoryPark = trajectoryBackPickUp.endTrajectory().fresh()
-                .splineToConstantHeading(new Vector2d(8, 40), Math.toRadians(-90));
+                .splineToConstantHeading(Constants.FinalAutoTrajectories.robotEndPosRed_B, Math.toRadians(-90));
 
 
         TrajectoryShootBallsAndPrep = trajectoryShootBallsandPickup.build();

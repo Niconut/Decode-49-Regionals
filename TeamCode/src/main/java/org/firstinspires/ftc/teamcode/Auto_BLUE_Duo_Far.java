@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Odom_Storage_Action;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Turret_Analog_Input_Action;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Actions.Intake_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Gate_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
@@ -41,6 +43,8 @@ public class Auto_BLUE_Duo_Far extends LinearOpMode {
         Distance_Sensor_Action distanceSensor = new Distance_Sensor_Action(hardwareMap);
         Scoring_Gate_Action scoringGate = new Scoring_Gate_Action(hardwareMap);
         Shooter_Subsystem_Action shooterSubsystem = new Shooter_Subsystem_Action(hardwareMap, Shooter_Subsystem_Action.Pipeline.BLUE);
+        Turret_Analog_Input_Action turretAnalog = new Turret_Analog_Input_Action(hardwareMap);
+        Odom_Storage_Action odomStorage = new Odom_Storage_Action(hardwareMap, drive);
 
         buildTrajectories(drive, beginPose);
         waitForStart();

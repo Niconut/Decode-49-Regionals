@@ -80,9 +80,9 @@ public class MyRobot extends Robot {
     public static ElapsedTime shooterTime;
     public static boolean startShooter = true;
 
-    public static int CLOSE_SHOOT_GATE_OPEN_DELAY = 75;
+    public static int CLOSE_SHOOT_GATE_OPEN_DELAY = 100;
     public static int CLOSE_SHOOT_FIRST_BALL_DELAY = 25;
-    public static int FAR_SHOOT_GATE_OPEN_DELAY = 75;
+    public static int FAR_SHOOT_GATE_OPEN_DELAY = 100;
     public static int FAR_SHOOT_FIRST_BALL_DELAY = 25;
 
 

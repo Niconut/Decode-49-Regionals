@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_commands;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.Shooter_Subsystem;
 
@@ -146,6 +148,9 @@ public class AutoAimTurretCommand extends CommandBase {
     // Use 5.812 if that is your exact physical gear ratio.
     private final double GEAR_RATIO = 5.812;
 
+    private Pose2d AutoPose = PostStorage.currentPose;
+    private double EndTurretAngle = PostStorage.endAutoTurretPos;
+
     private Pose3D limelightPose;
 
     public enum Team {
@@ -192,27 +197,65 @@ public class AutoAimTurretCommand extends CommandBase {
             robotResetPosY = robotResetPosYBlue_B;
             turretAngleOffset = 0;
         }
-        odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosX, robotResetPosY, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
+
+        odo.setPosition(new Pose2D(DistanceUnit.INCH, AutoPose.position.x, AutoPose.position.y, AngleUnit.RADIANS, (Math.toRadians(robotResetAngle) + AutoPose.heading.real)));
         odo.update();
 
         counter = 0;
 
         robotStartHeading =  -Math.toRadians(robotResetAngle);
-//
-//        odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosX, robotResetPosY, AngleUnit.RADIANS, Math.toRadians(robotResetAngle)));
+
+//        if (team == Team.Blue) {
+//            odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXBlue_B, robotResetPosYBlue_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngleBlue)));
+//        }
+//        if (team == Team.Red) {
+//            odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXRed_B, robotResetPosYRed_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngleRed)));
+//        }
 //        odo.update();
-//
-//
-//        calTurretRelativeAngleOffset = totalTurretAngle;
-////        calTurretRelativeAngleOffset = atan2(goal_X - robotResetPosX , goal_Y - robotResetPosY);
-////        if (calTurretRelativeAngleOffset > MAX_TURRET_ANGLE){
-////            calTurretRelativeAngleOffset = turretAngleOffset - TWO_PI;
-////        }
-////        if (calTurretRelativeAngleOffset < -MAX_TURRET_ANGLE){
-////            calTurretRelativeAngleOffset = turretAngleOffset + TWO_PI;
-////        }
-//
-//        initStates = true;
+        Pose2D robotPose = odo.getPosition();
+
+        if (team == Team.Blue) {
+            goal_X = BLUE_GOAL_X;
+            goal_Y = BLUE_GOAL_Y;
+            flywheelRobotPosX = robotPose.getX(DistanceUnit.INCH);
+            flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
+            turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
+            turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
+        }
+        if (team == Team.Red){
+            goal_X = RED_GOAL_X;
+            goal_Y = RED_GOAL_Y;
+            flywheelRobotPosX = robotPose.getX(DistanceUnit.INCH);
+            flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
+            turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
+            turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
+        }
+
+        // Calculate target absolute angle based on robot position on the field
+        targetFieldAngle = atan2(goal_X - turretRobotPosX , goal_Y - turretRobotPosY);
+        // wrap angles
+        while (targetFieldAngle > 0) targetFieldAngle -= TWO_PI;
+        while (targetFieldAngle < -TWO_PI) targetFieldAngle += TWO_PI;
+
+        if (Math.abs(targetRelativeAngle - targetFieldAngle) > PI){
+            if (Math.abs(targetRelativeAngle) > PI){
+                if(targetRelativeAngle > PI){
+                    targetRelativeAngle -= TWO_PI;
+                }else{
+                    targetRelativeAngle += TWO_PI;
+                }
+            }else if (Math.abs(targetFieldAngle) > PI) {
+                if (targetFieldAngle > PI) {
+                    targetFieldAngle -= TWO_PI;
+                } else {
+                    targetFieldAngle += TWO_PI;
+                }
+            }
+        }
+
+        calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (EndTurretAngle));
+        turretOdoAutoAimEnabled = true;
+
     }
 
     public void execute() {
@@ -443,7 +486,9 @@ public class AutoAimTurretCommand extends CommandBase {
                 robotResetAngle,
                 calTurretRelativeAngleOffset,
                 maxTurretnAngleLimit,
-                turretZeroOffsetAngle);
+                turretZeroOffsetAngle,
+                AutoPose,
+                EndTurretAngle);
     }
 }
 

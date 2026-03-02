@@ -15,6 +15,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Odom_Storage_Action;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Turret_Analog_Input_Action;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Actions.Intake_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Gate_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
@@ -42,6 +44,8 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
         Distance_Sensor_Action distanceSensor = new Distance_Sensor_Action(hardwareMap);
         Scoring_Gate_Action scoringGate = new Scoring_Gate_Action(hardwareMap);
         Shooter_Subsystem_Action shooterSubsystem = new Shooter_Subsystem_Action(hardwareMap, Shooter_Subsystem_Action.Pipeline.BLUE);
+        Turret_Analog_Input_Action turretAnalog = new Turret_Analog_Input_Action(hardwareMap);
+        Odom_Storage_Action odomStorage = new Odom_Storage_Action(hardwareMap, drive);
 
         shooterSubsystem.setPower(0);
         buildTrajectories(drive, beginPose);
@@ -49,7 +53,7 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
         PostStorage.currentPose = drive.localizer.getPose();
         Actions.runBlocking(
                 new SequentialAction(
-                        scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem)
+                        scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem, turretAnalog, odomStorage)
                 )
         );
         PostStorage.currentPose = drive.localizer.getPose();
@@ -118,7 +122,9 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
                                Intake_Subsystem_Action intakeSubsystem,
                                 Distance_Sensor_Action distanceSensor,
                                 Scoring_Gate_Action scoringGate,
-                               Shooter_Subsystem_Action shooterSubsystem){
+                               Shooter_Subsystem_Action shooterSubsystem,
+                               Turret_Analog_Input_Action turretAnalog,
+                               Odom_Storage_Action odomStorage){
 
         return
         new ParallelAction(
@@ -126,36 +132,41 @@ public class Auto_BLUE_Duo_Near_15_Ball extends LinearOpMode {
                     scoringGate.OpenGate(),
                     scoringShooter.ShootBalls(),
                     new SleepAction(0.5),
-
-                    // score preload then pickup first set of artifacts
                     new ParallelAction(
-                        TrajectoryRoute1,
-                        SHOOT_PRELOAD(intakeSubsystem, scoringGate, scoringShooter, distanceSensor)
-                    ),
-                    // shoot
-                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
-                    new ParallelAction(
-                        TrajectoryRoute2,
                         new SequentialAction(
-                            new SleepAction(0.5),
-                            FAST_INTAKE(intakeSubsystem, distanceSensor)
-                        )
-                    ),
-                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
-                    new ParallelAction(
-                            TrajectoryRoute3,
-                            FAST_INTAKE(intakeSubsystem, distanceSensor)
-                    ),
-                    SHOOT_CLOSE(intakeSubsystem, scoringGate),
-                    new ParallelAction(
-                        TrajectoryRoute5,
-                        FAST_INTAKE(intakeSubsystem, distanceSensor)
-                    ),
-                    SHOOT_CLOSE(intakeSubsystem, scoringGate)
+                    // score preload then pickup first set of artifacts
+                            new ParallelAction(
+                                TrajectoryRoute1,
+                                SHOOT_PRELOAD(intakeSubsystem, scoringGate, scoringShooter, distanceSensor)
+                            ),
+                            // shoot
+                            SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                            new ParallelAction(
+                                TrajectoryRoute2,
+                                new SequentialAction(
+                                    new SleepAction(0.5),
+                                    FAST_INTAKE(intakeSubsystem, distanceSensor)
+                                )
+                            ),
+                            SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                            new ParallelAction(
+                                    TrajectoryRoute3,
+                                    FAST_INTAKE(intakeSubsystem, distanceSensor)
+                            ),
+                            SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                            new ParallelAction(
+                                TrajectoryRoute5,
+                                FAST_INTAKE(intakeSubsystem, distanceSensor)
+                            ),
+                            SHOOT_CLOSE(intakeSubsystem, scoringGate)
+                        ),
+                        turretAnalog.GetTotalTurretAngle()
+                    )
 //                    TrajectoryRoute4,
 //                    TrajectoryRoute6
                 ),
-                shooterSubsystem.AutoAim()
+                shooterSubsystem.AutoAim(),
+                odomStorage.sendOdomCoords()
         );
     }
 
