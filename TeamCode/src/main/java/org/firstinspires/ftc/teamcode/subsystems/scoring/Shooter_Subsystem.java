@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.scoring;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -51,10 +52,10 @@ public class Shooter_Subsystem extends SubsystemBase {
     public static double UNSTUCK = -500;
     public static double INTAKE_BACK_SPIN = -20;
     public static double INIT = 0;
-    public static double kp = 150;
+    public static double kp = 150;// 170
     public static double ki = 0;
     public static double kd = 0;
-    public static double kf = 0;
+    public static double kf = 0;// 0
     public static double botX = 0;
     public static double botY = 0;
     public static double botHeading = 0;
@@ -136,6 +137,9 @@ public class Shooter_Subsystem extends SubsystemBase {
         servoTurret.setPower(power);
     }
     public void setVelocity(double vel){
+        double currentVel = ScoringShooter.getVelocity();
+        double kp_adj = ((vel + 0.1 * (vel - currentVel))/vel) * kp;
+        ScoringShooter.setVelocityPIDFCoefficients(kp_adj, ki, kd, kf);
         ScoringShooter.setVelocity(vel);
     }
 

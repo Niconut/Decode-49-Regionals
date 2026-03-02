@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
 @Configurable
-@Autonomous (name = "RED Solo Near 15", group = "Red Alliance")
-public class Auto_RED_Solo_Near_15_Ball extends LinearOpMode {
+@Autonomous (name = "PostStorageTesting", group = "Red Alliance")
+public class Auto_RED_Solo_Near_15_Ball_PostStorageTEst extends LinearOpMode {
 
     private MecanumDrive drive;
     Action TrajectoryShootBallsAndPrep,
@@ -37,7 +37,7 @@ public class Auto_RED_Solo_Near_15_Ball extends LinearOpMode {
 
     public static Vector2d firstScore = new Vector2d(0,16);
     public static Vector2d midPickupPrep = new Vector2d(14,30);
-    public static double midPickup = 54;
+    public static double midPickup = 50;
     public static Vector2d shootPrep1 = new Vector2d(14,30);
     public static Vector2d secondScore = new Vector2d(-16,20);
     public static Vector2d frontPrep = new Vector2d(-11, 32);
@@ -134,67 +134,42 @@ public class Auto_RED_Solo_Near_15_Ball extends LinearOpMode {
                         scoringShooter.ShootBalls(),
                         new SleepAction(0.5),
                         turretAnalog.GetInitialAngle(),
-                        new ParallelAction(
-                                new SequentialAction(
                         // score preload then pickup first set of artifacts
-                                    new ParallelAction(
-                                        TrajectoryShootBallsAndPrep,
-                                        new SequentialAction(
-                                            new SleepAction(0.75),
-                                            SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                                            new SleepAction(0.75),
-                                            scoringGate.CloseGate(),
-                                            scoringShooter.CloseShooter2(),
-                                            INTAKE(intakeSubsystem, distanceSensor)
-                                        )
-                                    ),
-                                    // shoot
-                                    scoringGate.OpenGate(),
-                                    new SleepAction(0.35),
-                                    SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                                    new SleepAction(0.5),
-                                    scoringGate.CloseGate(),
-                                    new ParallelAction(
-                                            TrajectoryGateBackUp,
-                                            new SequentialAction(
-                                                    new SleepAction(0.5),
-                                                FAST_INTAKE(intakeSubsystem, distanceSensor)
-                                            )
-                                    ),
-                                    new ParallelAction(
-                                            TrajectoryShootBalls3,
-                                            scoringShooter.CloseShooter2()
-                                    ),
-                                    scoringGate.OpenGate(),
-                                    new SleepAction(0.35),
-                                    SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                                    new SleepAction(0.5),
-                                    // pickup 2nd set
-                                    scoringGate.CloseGate(),
-                                    new ParallelAction(
-                                        TrajectoryFrontPickUp,
+                        new ParallelAction(
+                            TrajectoryShootBallsAndPrep,
+                            new SequentialAction(
+                                new SleepAction(0.75),
+                                SHOOT_REAR_MID_FRONT(intakeSubsystem),
+                                new SleepAction(0.75),
+                                scoringGate.CloseGate(),
+                                scoringShooter.CloseShooter2(),
+                                INTAKE(intakeSubsystem, distanceSensor)
+                            )
+                        ),
+                        // shoot
+                        scoringGate.OpenGate(),
+                        new SleepAction(0.35),
+                        SHOOT_REAR_MID_FRONT(intakeSubsystem),
+                        new SleepAction(0.5),
+                        scoringGate.CloseGate(),
+                        new ParallelAction(
+                                TrajectoryGateBackUp,
+                                new SequentialAction(
+                                        new SleepAction(0.5),
                                         FAST_INTAKE(intakeSubsystem, distanceSensor)
-                                    ),
-                                    scoringGate.OpenGate(),
-                                    new SleepAction(0.35),
-                                    SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                                    new SleepAction(0.5),
-                                    // pickup 3rd set
-                                    scoringGate.CloseGate(),
-                                    new ParallelAction(
-                                        TrajectoryBackPickUp,
-                                        SLOW_INTAKE(intakeSubsystem, distanceSensor),
-                                        scoringShooter.CloseShooter2()
-                                    ),
-                                    scoringGate.OpenGate(),
-                                    new SleepAction(0.35),
-                                    FAR_SHOOT(intakeSubsystem),
-                                    new SleepAction(0.75),
-
-                                    TrajectoryPark
-                                ),
-                                turretAnalog.GetTotalTurretAngle()
-                        )
+                                )
+                        ),
+                        new ParallelAction(
+                                TrajectoryShootBalls3,
+                                scoringShooter.CloseShooter2()
+                        ),
+                        scoringGate.OpenGate(),
+                        new SleepAction(0.35),
+                        SHOOT_REAR_MID_FRONT(intakeSubsystem),
+                        new SleepAction(0.5),
+                        // pickup 2nd set
+                        scoringGate.CloseGate(),
+                        turretAnalog.GetTotalTurretAngle() //X is 0.5 off, Y is 1 off
                     ),
                     shooterSubsystem.AutoAim(),
                     odomStorage.sendOdomCoords()

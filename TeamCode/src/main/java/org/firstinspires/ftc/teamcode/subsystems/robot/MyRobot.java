@@ -82,6 +82,9 @@ public class MyRobot extends Robot {
 
     public static int CLOSE_SHOOT_GATE_OPEN_DELAY = 75;
     public static int CLOSE_SHOOT_FIRST_BALL_DELAY = 25;
+    public static int FAR_SHOOT_GATE_OPEN_DELAY = 75;
+    public static int FAR_SHOOT_FIRST_BALL_DELAY = 25;
+
 
     public enum TeleOpModeType {
         Field, Robot
@@ -392,7 +395,6 @@ public class MyRobot extends Robot {
                     )
             );
 
-
             intakeShoot1.whenPressed(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
@@ -448,11 +450,11 @@ public class MyRobot extends Robot {
                             ),
                             new SequentialCommandGroup(
                                     new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
-                                    new WaitCommand(50),
+                                    new WaitCommand(FAR_SHOOT_GATE_OPEN_DELAY),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
-                                    new WaitCommand(200),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
-                                    new WaitCommand(500),
+                                    new WaitCommand(FAR_SHOOT_FIRST_BALL_DELAY),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                    new WaitCommand(2000),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
 
                             )
@@ -834,11 +836,11 @@ public class MyRobot extends Robot {
                             ),
                             new SequentialCommandGroup(
                                     new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
-                                    new WaitCommand(50),
+                                    new WaitCommand(FAR_SHOOT_GATE_OPEN_DELAY),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
-                                    new WaitCommand(200),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
-                                    new WaitCommand(500),
+                                    new WaitCommand(FAR_SHOOT_FIRST_BALL_DELAY),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                    new WaitCommand(2000),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
                             )
                     )
