@@ -50,7 +50,7 @@ public class Auto_BLUE_Duo_Far extends LinearOpMode {
         waitForStart();
         Actions.runBlocking(
             new SequentialAction(
-                scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem)
+                scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem, turretAnalog, odomStorage)
             )
         );
     }
@@ -111,7 +111,9 @@ public class Auto_BLUE_Duo_Far extends LinearOpMode {
                                Intake_Subsystem_Action intakeSubsystem,
                                Distance_Sensor_Action distanceSensor,
                                Scoring_Gate_Action scoringGate,
-                               Shooter_Subsystem_Action shooterSubsystem){
+                               Shooter_Subsystem_Action shooterSubsystem,
+                               Turret_Analog_Input_Action turretAnalog,
+                               Odom_Storage_Action odomStorage){
 
         return
         new ParallelAction(
@@ -209,8 +211,9 @@ public class Auto_BLUE_Duo_Far extends LinearOpMode {
 
                         TrajectoryPark
                 ),
-
-                shooterSubsystem.AutoAim() // enable auto aim for the entire auto
+                shooterSubsystem.AutoAim(),
+                odomStorage.sendOdomCoords(),
+                turretAnalog.GetTotalTurretAngle()// enable auto aim for the entire auto
         );
     }
 

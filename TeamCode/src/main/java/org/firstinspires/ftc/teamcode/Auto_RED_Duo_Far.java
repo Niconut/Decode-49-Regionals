@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Odom_Storage_Action;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Turret_Analog_Input_Action;
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Actions.Intake_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Gate_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
@@ -40,12 +42,14 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
         Distance_Sensor_Action distanceSensor = new Distance_Sensor_Action(hardwareMap);
         Scoring_Gate_Action scoringGate = new Scoring_Gate_Action(hardwareMap);
         Shooter_Subsystem_Action shooterSubsystem = new Shooter_Subsystem_Action(hardwareMap, Shooter_Subsystem_Action.Pipeline.RED);
+        Turret_Analog_Input_Action turretAnalog = new Turret_Analog_Input_Action(hardwareMap);
+        Odom_Storage_Action odomStorage = new Odom_Storage_Action(hardwareMap, drive);
 
         buildTrajectories(drive, beginPose);
         waitForStart();
         Actions.runBlocking(
             new SequentialAction(
-                scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem)
+                scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem, turretAnalog, odomStorage)
             )
         );
     }
@@ -106,7 +110,9 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                                Intake_Subsystem_Action intakeSubsystem,
                                Distance_Sensor_Action distanceSensor,
                                Scoring_Gate_Action scoringGate,
-                               Shooter_Subsystem_Action shooterSubsystem){
+                               Shooter_Subsystem_Action shooterSubsystem,
+                               Turret_Analog_Input_Action turretAnalog,
+                               Odom_Storage_Action odomStorage){
 
         return
         new ParallelAction(
@@ -205,7 +211,9 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
                         TrajectoryPark
                 ),
 
-                shooterSubsystem.AutoAim() // enable auto aim for the entire auto
+                shooterSubsystem.AutoAim(),
+                odomStorage.sendOdomCoords(),
+                turretAnalog.GetTotalTurretAngle()// enable auto aim for the entire auto
         );
     }
 
