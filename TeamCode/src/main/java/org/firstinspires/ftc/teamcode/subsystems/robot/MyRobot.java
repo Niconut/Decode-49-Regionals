@@ -16,6 +16,7 @@ import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -84,7 +85,7 @@ public class MyRobot extends Robot {
     public static int CLOSE_SHOOT_FIRST_BALL_DELAY = 25;
     public static int FAR_SHOOT_GATE_OPEN_DELAY = 100;
     public static int FAR_SHOOT_FIRST_BALL_DELAY = 25;
-
+    public static double SHOOTING_DISTANCE_THRESHOLD = 90;
 
     public enum TeleOpModeType {
         Field, Robot
@@ -117,6 +118,17 @@ public class MyRobot extends Robot {
      * Initialize teleop or autonomous, depending on which is used
      */
     public void initTele(TeleOpMode mode) {
+//        MyRobot.disable();
+//        shooterTime = new ElapsedTime();
+//        drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
+//        endgameKickstand = new Endgame_Kickstand(this);
+//        intakeSubsystem = new Intake_Subsystem(this);
+//        distanceSensor = new Distance_Sensor(this);
+//        scoringGate = new Scoring_Gate(this);
+//        shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.RED);
+//        lightIndicator = new Light_Indicator(this);
+//        MyRobot.enable();
+
         if (mode == TeleOpMode.RED){
             targetAngle = -1.5;
             shooterTime = new ElapsedTime();
@@ -159,8 +171,10 @@ public class MyRobot extends Robot {
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
             Button driveTelemetry = new GamepadButton(driver, GamepadKeys.Button.BACK);
             Button drivesSoot = new GamepadButton(driver, GamepadKeys.Button.X);
-            Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
-            Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
+            Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
+            Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
+
+            endgameKickstand.setState(Endgame_Kickstand.EndgameState.UP);
 
             endgameActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.DOWN));
 
@@ -203,13 +217,6 @@ public class MyRobot extends Robot {
             Button directIntakeShoot = new GamepadButton(operator, GamepadKeys.Button.X);
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
-
-           /* shooterStop.whenPressed(
-                    new SequentialCommandGroup(
-                        new InstantCommand(this::changeShooterState),
-                        new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
-                    )
-            );*/
 
             intakeFront.whileHeld(
                     new ParallelCommandGroup(
@@ -325,18 +332,40 @@ public class MyRobot extends Robot {
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
                                     new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Close Range Shooting")),
+                                    new InstantCommand(()-> telemetry.addLine("Driver Shooting")),
                                     new InstantCommand(()-> telemetry.update())
                             ),
                             new SequentialCommandGroup(
-                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
-                                    new WaitCommand(300),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_FORWARD_REVERSE),
-                                    new WaitCommand(750),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
-                                    new WaitCommand(2000),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
+                                    new InstantCommand(()-> {
+                                        turretProp = shooterSubsystem.detectAprilTag();
+                                        turretBearing = (turretProp[0]);
+                                        turretRange = (turretProp[1]);
 
+                                        if (Math.abs(turretBearing) != 0) {
+                                            if (turretRange > SHOOTING_DISTANCE_THRESHOLD) {
+                                                new SequentialCommandGroup(
+                                                        new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
+                                                        new WaitCommand(FAR_SHOOT_GATE_OPEN_DELAY),
+                                                        new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                                        new WaitCommand(FAR_SHOOT_FIRST_BALL_DELAY),
+                                                        new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                                        new WaitCommand(2000),
+                                                        new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
+                                                );
+                                            }
+                                        } else{
+                                            new SequentialCommandGroup(
+                                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
+                                                    new WaitCommand(CLOSE_SHOOT_GATE_OPEN_DELAY),
+                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
+                                                    new WaitCommand(CLOSE_SHOOT_FIRST_BALL_DELAY),
+                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
+                                                    new WaitCommand(2000),
+                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
+                                            );
+                                        }
+                                    }
+                                    )
                             )
                     )
             );
@@ -456,58 +485,9 @@ public class MyRobot extends Robot {
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
                                     new WaitCommand(2000),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
-
                             )
                     )
             );
-            /*shooterStart.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Release Stuck Artifact")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SequentialCommandGroup(
-                                    new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.FAR)
-                            )
-                    )
-            );
-            shooterStartClose.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Release Stuck Artifact")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SequentialCommandGroup(
-                                    new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.SHOOT)
-                            )
-                    )
-            );
-
-            shooterStartCloseClose.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Release Stuck Artifact")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SequentialCommandGroup(
-                                    new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.NEARNEARSHOOT)
-                            )
-                    )
-            );
-            shooterStop.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Stops Shooter")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.INIT)
-                    )
-            );*/
-
 
             sensorTele.whileHeld(
                     new SequentialCommandGroup(
@@ -519,7 +499,6 @@ public class MyRobot extends Robot {
                     )
             );
         }
-
         else if (mode == TeleOpMode.BLUE){
             targetAngle = 1.50;
             shooterTime = new ElapsedTime();
@@ -562,8 +541,10 @@ public class MyRobot extends Robot {
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
             Button driveTelemetry = new GamepadButton(driver, GamepadKeys.Button.BACK);
             Button drivesShoot = new GamepadButton(driver, GamepadKeys.Button.X);
-            Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
-            Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
+            Button endgameActivate =  new GamepadButton(driver, GamepadKeys.Button.DPAD_UP);
+            Button endgameDeActivate = new GamepadButton(driver, GamepadKeys.Button.DPAD_DOWN);
+
+            endgameKickstand.setState(Endgame_Kickstand.EndgameState.UP);
 
             endgameActivate.whenPressed(new MoveEndgameKickstandCommand(endgameKickstand, Endgame_Kickstand.EndgameState.DOWN));
 
@@ -683,13 +664,6 @@ public class MyRobot extends Robot {
 
             scoringGate.setState(Scoring_Gate.ScoringGState.CLOSE);
 
-           /* shooterStop.whenPressed(
-                    new SequentialCommandGroup(
-                        new InstantCommand(this::changeShooterState),
-                        new InstantCommand(()-> telemetry.addData("Shooter On", startShooter))
-                    )
-            );*/
-
             intakeFront.whileHeld(
                             new SequentialCommandGroup(
                                     new InstantCommand(()-> {
@@ -845,54 +819,6 @@ public class MyRobot extends Robot {
                             )
                     )
             );
-            /*shooterStart.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Release Stuck Artifact")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SequentialCommandGroup(
-                                    new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.FAR)
-                            )
-                    )
-            );
-            shooterStartClose.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Release Stuck Artifact")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SequentialCommandGroup(
-                                    new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.SHOOT)
-                            )
-                    )
-            );
-
-            shooterStartCloseClose.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Release Stuck Artifact")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SequentialCommandGroup(
-                                    new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.NEARNEARSHOOT)
-                            )
-                    )
-            );
-            shooterStop.whenPressed(
-                    new ParallelCommandGroup(
-                            new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Stops Shooter")),
-                                    new InstantCommand(()-> telemetry.update())
-                            ),
-                            new SpinScoringShooterCommand(scoringShooter, Scoring_Shooter.ScoringShooterState.INIT)
-                    )
-            );*/
-
 
             sensorTele.whileHeld(
                     new SequentialCommandGroup(

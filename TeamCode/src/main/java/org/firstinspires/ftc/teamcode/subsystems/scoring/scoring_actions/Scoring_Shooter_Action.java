@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Scoring_Shooter_Action {
     public DcMotorEx ScoringShooter;
     public static double SHOOT = 1350;
-    public static double SECONDSHOOT = 1260;
+    public static double SECONDSHOOT = 1320;
     public static double FAR = 1675;
     public static double FARTHER = 1650;
     public Scoring_Shooter_Action(HardwareMap hardwareMap){

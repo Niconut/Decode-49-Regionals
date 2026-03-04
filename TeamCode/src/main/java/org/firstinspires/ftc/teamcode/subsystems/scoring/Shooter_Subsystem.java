@@ -222,6 +222,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         }
         else return false;
     }
+
     public double getCurrentPosition(){return servoTurret.getPower();}
 
     public void lightGreen(){
