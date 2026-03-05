@@ -47,6 +47,14 @@ public class Auto_BLUE_Duo_Far_FHTHTH extends LinearOpMode {
         Odom_Storage_Action odomStorage = new Odom_Storage_Action(hardwareMap, drive);
 
         buildTrajectories(drive, beginPose);
+
+        while (!isStarted()){
+            Actions.runBlocking(
+                    new SequentialAction(READTURRETPOSITION(shooterSubsystem)
+                    )
+            );
+        }
+
         waitForStart();
         Actions.runBlocking(
             new SequentialAction(
@@ -252,6 +260,10 @@ public class Auto_BLUE_Duo_Far_FHTHTH extends LinearOpMode {
         );
     }
 
-
+    public Action READTURRETPOSITION(Shooter_Subsystem_Action shooterSubsystem){
+        return new SequentialAction(
+                shooterSubsystem.ReadTurretPosition()
+        );
+    }
 
 }

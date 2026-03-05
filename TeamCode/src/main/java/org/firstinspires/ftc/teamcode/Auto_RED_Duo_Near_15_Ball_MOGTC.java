@@ -13,7 +13,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.subsystems.Constants.FinalAutoTrajectories;
+import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Odom_Storage_Action;
@@ -25,8 +25,8 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
 @Configurable
-@Autonomous (name = "RED Duo Near 15 OPT 1", group = "Red Alliance")
-public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
+@Autonomous (name = "RED Duo Near 15 MOGTC", group = "Red Alliance")
+public class Auto_RED_Duo_Near_15_Ball_MOGTC extends LinearOpMode {
 
     private MecanumDrive drive;
     Action TrajectoryRoute1,
@@ -50,6 +50,14 @@ public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
 
         shooterSubsystem.setPower(0);
         buildTrajectories(drive, beginPose);
+
+        while (!isStarted()){
+            Actions.runBlocking(
+                    new SequentialAction(READTURRETPOSITION(shooterSubsystem)
+                    )
+            );
+        }
+
         waitForStart();
         PostStorage.currentPose = drive.localizer.getPose();
         Actions.runBlocking(
@@ -64,46 +72,48 @@ public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
         // preload and pickup mid
         TrajectoryActionBuilder trajectoryRoute1 = drive.actionBuilder(beginPose) // preload and pickup MID and open gate
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(0,16), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(2,16), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(15,30), Math.toRadians(90))
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(13,58), Math.toRadians(90), new TranslationalVelConstraint(70))
-                .splineToConstantHeading(new Vector2d(10,46), Math.toRadians(90), new TranslationalVelConstraint(30))
-                .splineToConstantHeading(new Vector2d(0,58), Math.toRadians(90), new TranslationalVelConstraint(30))
-                .splineToConstantHeading(new Vector2d(-4,36), Math.toRadians(-90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(13,58), Math.toRadians(90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(2,46), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(-4,60), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(-6,50), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 .splineToConstantHeading(new Vector2d(-12,20), Math.toRadians(90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryRoute2= trajectoryRoute1.endTrajectory().fresh() //Gate Open
-                .splineToConstantHeading(new Vector2d(-0, 28), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(7,54), Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(20, 64, Math.toRadians(120)), Math.toRadians(90));
+                .splineToConstantHeading(new Vector2d(-0, 28), Math.toRadians(0), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(7,55), Math.toRadians(90), new TranslationalVelConstraint(40))
+                .splineToLinearHeading(new Pose2d(20, 64, Math.toRadians(120)), Math.toRadians(90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryRoute3 = trajectoryRoute2.endTrajectory().fresh() // Shoot Gate Balls
-                .splineToLinearHeading(new Pose2d(16, 54, Math.toRadians(90)), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(12,36), Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(-12,20), Math.toRadians(90), new TranslationalVelConstraint(70));
+                .strafeToLinearHeading(new Vector2d(-6,20), Math.toRadians(90), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryRoute4 = trajectoryRoute3.endTrajectory().fresh() // pickup G
-                .setReversed(false)
-                .splineToConstantHeading(new Vector2d(30, 30), Math.toRadians(90), new TranslationalVelConstraint(40))
-                .splineToConstantHeading(new Vector2d(16,62), Math.toRadians(90), new TranslationalVelConstraint(70))
-                .splineToConstantHeading(new Vector2d(20,48), Math.toRadians(90), new TranslationalVelConstraint(30))
-                .splineToConstantHeading(new Vector2d(24,62), Math.toRadians(90), new TranslationalVelConstraint(30))
-                .splineToConstantHeading(new Vector2d(-12,20), Math.toRadians(90), new TranslationalVelConstraint(70));
-
-        TrajectoryActionBuilder trajectoryRoute5 = trajectoryRoute4.endTrajectory().fresh() // pickup CLOSE and open gate
+        TrajectoryActionBuilder trajectoryRoute4 = trajectoryRoute3.endTrajectory().fresh() // pickup TUNNEL
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-7, 32), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(28, 30), Math.toRadians(90), new TranslationalVelConstraint(30))
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(-5,58), Math.toRadians(90), new TranslationalVelConstraint(70))
-                .splineToConstantHeading(FinalAutoTrajectories.robotEndPosRed_B, Math.toRadians(90), new TranslationalVelConstraint(70));
+                .lineToY(62, new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(26,48), Math.toRadians(-90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(24,62), Math.toRadians(90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(0, 22), Math.toRadians(180), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(-12, 20), Math.toRadians(90), new TranslationalVelConstraint(70));
+
+        TrajectoryActionBuilder trajectoryRoute5 = trajectoryRoute4.endTrajectory().fresh() // pickup CLOSE
+                .splineToConstantHeading(new Vector2d(-11, 32), Math.toRadians(90))
+                .lineToY(50, new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(-11,30), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(-10,20), Math.toRadians(90));
+
+        TrajectoryActionBuilder trajectoryRoute6 = trajectoryRoute5.endTrajectory().fresh()
+                .strafeToConstantHeading(Constants.FinalAutoTrajectories.robotEndPosRed_B);
 
         TrajectoryRoute1 = trajectoryRoute1.build();
         TrajectoryRoute2 = trajectoryRoute2.build();
         TrajectoryRoute3 = trajectoryRoute3.build();
         TrajectoryRoute4 = trajectoryRoute4.build();
         TrajectoryRoute5 = trajectoryRoute5.build();
-//        TrajectoryRoute6 = trajectoryRoute6.build();
+        TrajectoryRoute6 = trajectoryRoute6.build();
     }
 
     public Action spinShooter(Scoring_Shooter_Action scoringShooter){
@@ -127,7 +137,7 @@ public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
                     new SleepAction(0.5),
                     new ParallelAction(
                         new SequentialAction(
-                        // score preload then pickup first set of artifacts
+                    // score preload then pickup first set of artifacts
                             new ParallelAction(
                                 TrajectoryRoute1,
                                 SHOOT_PRELOAD(intakeSubsystem, scoringGate, scoringShooter, distanceSensor)
@@ -148,7 +158,10 @@ public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
                             SHOOT_CLOSE(intakeSubsystem, scoringGate),
                             new ParallelAction(
                                 TrajectoryRoute4,
-                                FAST_INTAKE(intakeSubsystem, distanceSensor)
+                                    new SequentialAction(
+                                            new SleepAction(0.5),
+                                            FAST_INTAKE(intakeSubsystem, distanceSensor)
+                                    )
                             ),
                             SHOOT_CLOSE(intakeSubsystem, scoringGate),
                             new ParallelAction(
@@ -158,7 +171,8 @@ public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
                                             FAST_INTAKE(intakeSubsystem, distanceSensor)
                                     )
                             ),
-                            SHOOT_CLOSE(intakeSubsystem, scoringGate)
+                            SHOOT_CLOSE(intakeSubsystem, scoringGate),
+                            TrajectoryRoute6
                         ),
                         turretAnalog.GetTotalTurretAngle()
                     )
@@ -229,6 +243,12 @@ public class Auto_RED_Duo_Near_15_Ball_OPT1 extends LinearOpMode {
                 intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_OFF_OFF),
                 distanceSensor.FrontTriggered(),
                 intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.INIT)
+        );
+    }
+
+    public Action READTURRETPOSITION(Shooter_Subsystem_Action shooterSubsystem){
+        return new SequentialAction(
+                shooterSubsystem.ReadTurretPosition()
         );
     }
 

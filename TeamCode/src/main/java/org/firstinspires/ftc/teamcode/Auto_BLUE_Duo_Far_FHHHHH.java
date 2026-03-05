@@ -46,6 +46,14 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
         Odom_Storage_Action odomStorage = new Odom_Storage_Action(hardwareMap, drive);
 
         buildTrajectories(drive, beginPose);
+
+        while (!isStarted()){
+            Actions.runBlocking(
+                    new SequentialAction(READTURRETPOSITION(shooterSubsystem)
+                    )
+            );
+        }
+
         waitForStart();
         Actions.runBlocking(
             new SequentialAction(
@@ -122,7 +130,7 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
                         scoringShooter.FarShooter(),
                         new SleepAction(2.5),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.75),
+                        new SleepAction(1),
                         scoringGate.CloseGate(),
                         scoringShooter.FartherShooter(),
 
@@ -137,7 +145,7 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.65),
+                        new SleepAction(1),
                         scoringGate.CloseGate(),
 
                         // pickup from human player then go to shooting zone
@@ -154,7 +162,7 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.5),
+                        new SleepAction(1),
                         scoringGate.CloseGate(),
 
                         // pickup from human player then go to shooting zone
@@ -171,7 +179,7 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.5),
+                        new SleepAction(1),
                         scoringGate.CloseGate(),
 
                         // pickup from human player then go to shooting zone
@@ -188,7 +196,7 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.5),
+                        new SleepAction(1),
                         scoringGate.CloseGate(),
 
                         // pickup from human player then go to shooting zone
@@ -205,7 +213,7 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
                         scoringGate.OpenGate(),
                         new SleepAction(0.35),
                         FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(0.5),
+                        new SleepAction(1),
                         scoringGate.CloseGate(),
 
                         TrajectoryPark
@@ -251,6 +259,10 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
         );
     }
 
-
+    public Action READTURRETPOSITION(Shooter_Subsystem_Action shooterSubsystem){
+        return new SequentialAction(
+                shooterSubsystem.ReadTurretPosition()
+        );
+    }
 
 }

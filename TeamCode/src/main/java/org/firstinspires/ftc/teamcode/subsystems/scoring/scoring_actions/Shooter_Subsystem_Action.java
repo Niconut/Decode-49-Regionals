@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
     private final double MAX_VOLTAGE = 3.3;
     private final double TWO_PI = 2.0 * Math.PI;
     private final double HALF_PI = 0.5 * Math.PI;
+    private double startEncoderAngle = 0;
 
     // Use 5.812 if that is your exact physical gear ratio.
     private final double GEAR_RATIO = 5.812;
@@ -90,7 +91,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 double power = PID.calculate(-turretBearing, targettx);
 
                 // angle limit
-                currentEncoderAngle = (turretAnalog.getVoltage() / MAX_VOLTAGE) * TWO_PI; // goes from 0 to 2 PI
+                currentEncoderAngle = ((turretAnalog.getVoltage() - startEncoderAngle) / MAX_VOLTAGE) * TWO_PI; // goes from 0 to 2 PI
                 delta = currentEncoderAngle - lastEncoderAngle;
                 lastEncoderAngle = currentEncoderAngle;
                 // wrap angles
@@ -105,7 +106,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 totalTurretAngle = (totalEncoderAngle / GEAR_RATIO);
 
                 //kp * error;
-                servoTurret.setPower(power);
+                if ((totalTurretAngle > 0.5 && power > 0) || (totalTurretAngle < -0.5 && power < 0)){
+                    servoTurret.setPower(0);
+                }else{
+                    servoTurret.setPower(power);
+                }
             }
             return true;
         }
@@ -124,9 +129,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
         }
     }
 
+      public class readTurretPosition implements Action{
+          public boolean initialized = false;
+          public double INIT = 0;
+          @Override
+          public boolean run (@NonNull TelemetryPacket packet){
+              //if(!initialized){
+              //startEncoderAngle = (turretAnalog.getVoltage() / MAX_VOLTAGE) * TWO_PI;
+              startEncoderAngle = turretAnalog.getVoltage();
+
+              //initialized = true;
+             // }
+              return false;
+          }
+      }
+
     public Action AutoAim(){return new autoAim();}
     public Action TurretINIT(){ return new INIT();}
-
+    public Action ReadTurretPosition(){ return new readTurretPosition();}
 
 
 

@@ -14,6 +14,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
@@ -65,6 +66,14 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
 
         shooterSubsystem.setPower(0);
         buildTrajectories(drive, beginPose);
+
+        while (!isStarted()){
+            Actions.runBlocking(
+                    new SequentialAction(READTURRETPOSITION(shooterSubsystem)
+                    )
+            );
+        }
+
         waitForStart();
         PostStorage.currentPose = drive.localizer.getPose();
         Actions.runBlocking(
@@ -216,6 +225,12 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
     public Action SHOOT_REAR_MID_FRONT(Intake_Subsystem_Action intakeSubsystem){
         return new SequentialAction(
                 intakeSubsystem.action(Intake_Subsystem_Action.IntakeMode.FORWARD_FORWARD_REVERSE)
+        );
+    }
+
+    public Action READTURRETPOSITION(Shooter_Subsystem_Action shooterSubsystem){
+        return new SequentialAction(
+                shooterSubsystem.ReadTurretPosition()
         );
     }
 

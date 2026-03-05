@@ -49,6 +49,14 @@ public class Auto_BLUE_Duo_Near_15_Ball_MOCOFT extends LinearOpMode {
 
         shooterSubsystem.setPower(0);
         buildTrajectories(drive, beginPose);
+
+        while (!isStarted()){
+            Actions.runBlocking(
+                    new SequentialAction(READTURRETPOSITION(shooterSubsystem)
+                    )
+            );
+        }
+
         waitForStart();
         PostStorage.currentPose = drive.localizer.getPose();
         Actions.runBlocking(
@@ -242,6 +250,11 @@ public class Auto_BLUE_Duo_Near_15_Ball_MOCOFT extends LinearOpMode {
         );
     }
 
+    public Action READTURRETPOSITION(Shooter_Subsystem_Action shooterSubsystem){
+        return new SequentialAction(
+                shooterSubsystem.ReadTurretPosition()
+        );
+    }
 
 
 

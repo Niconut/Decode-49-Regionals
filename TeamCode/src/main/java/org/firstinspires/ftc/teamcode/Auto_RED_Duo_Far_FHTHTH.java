@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.bylazar.configurables.annotations.Configurable;
@@ -22,8 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
 @Configurable
-@Autonomous (name = "RED Duo Far", group = "Red Alliance")
-public class Auto_RED_Duo_Far extends LinearOpMode {
+@Autonomous (name = "RED Duo Far FHT", group = "Red Alliance")
+public class Auto_RED_Duo_Far_FHTHTH extends LinearOpMode {
 
     private MecanumDrive drive;
     Action
@@ -46,6 +47,14 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
         Odom_Storage_Action odomStorage = new Odom_Storage_Action(hardwareMap, drive);
 
         buildTrajectories(drive, beginPose);
+
+        while (!isStarted()){
+            Actions.runBlocking(
+                    new SequentialAction(READTURRETPOSITION(shooterSubsystem)
+                    )
+            );
+        }
+
         waitForStart();
         Actions.runBlocking(
             new SequentialAction(
@@ -56,41 +65,41 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
 
     private void buildTrajectories(MecanumDrive drive, Pose2d beginPose){
 
-        TrajectoryActionBuilder trajectoryFarSpikePickUp = drive.actionBuilder(beginPose)
-                .splineToConstantHeading(new Vector2d(36, 30), Math.toRadians(90))
-                .lineToY(60)
-                .splineToConstantHeading(new Vector2d(36,46), Math.toRadians(-90))
-                .splineToConstantHeading(new Vector2d(56, 16), Math.toRadians(0));
+        TrajectoryActionBuilder trajectoryFarSpikePickUp = drive.actionBuilder(beginPose) // FAR
+                .splineToConstantHeading(new Vector2d(36, 30), Math.toRadians(90), new TranslationalVelConstraint(40))
+                .lineToY(58, new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(36,46), Math.toRadians(-90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(56, 16), Math.toRadians(0), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryHumanPickUp1 = trajectoryFarSpikePickUp.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryHumanPickUp1 = trajectoryFarSpikePickUp.endTrajectory().fresh() // HUMAN PLAYER
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(66,50), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
-                .lineToY(16);
+                .splineToConstantHeading(new Vector2d(68,58), Math.toRadians(90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(66,46), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .lineToY(16, new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryHumanPickup2 = trajectoryHumanPickUp1.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryHumanPickup2 = trajectoryHumanPickUp1.endTrajectory().fresh() // TUNNEL
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(66,50), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
-                .lineToY(16);
+                .splineToConstantHeading(new Vector2d(36,58), Math.toRadians(90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(40,46), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(44,62), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(56, 16), Math.toRadians(0), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryHumanPickup3 = trajectoryHumanPickup2.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryHumanPickup3 = trajectoryHumanPickup2.endTrajectory().fresh() // HUMAN PLAYER
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(66,50), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
-                .lineToY(16);
+                .splineToConstantHeading(new Vector2d(68,58), Math.toRadians(90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(66,46), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .lineToY(16, new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryHumanPickup4 = trajectoryHumanPickup3.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryHumanPickup4 = trajectoryHumanPickup3.endTrajectory().fresh() // TUNNEL
                 .setReversed(false)
-                .splineToConstantHeading(new Vector2d(68,62), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(62,50), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(60,64), Math.toRadians(90))
-                .lineToY(16);
+                .splineToConstantHeading(new Vector2d(36,58), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(40,46), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(44,62), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .splineToConstantHeading(new Vector2d(56, 16), Math.toRadians(0), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryPark = trajectoryHumanPickup4.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryPark = trajectoryHumanPickup4.endTrajectory().fresh() // HUMAN PLAYER
                 .splineToConstantHeading(new Vector2d(36, 48), Math.toRadians(-90));
 
         TrajectoryHumanPickup4 = trajectoryHumanPickup4.build();
@@ -210,7 +219,6 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
 
                         TrajectoryPark
                 ),
-
                 shooterSubsystem.AutoAim(),
                 odomStorage.sendOdomCoords(),
                 turretAnalog.GetTotalTurretAngle()// enable auto aim for the entire auto
@@ -252,6 +260,10 @@ public class Auto_RED_Duo_Far extends LinearOpMode {
         );
     }
 
-
+    public Action READTURRETPOSITION(Shooter_Subsystem_Action shooterSubsystem){
+        return new SequentialAction(
+                shooterSubsystem.ReadTurretPosition()
+        );
+    }
 
 }
