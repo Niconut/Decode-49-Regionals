@@ -66,7 +66,9 @@ public class AutoAimTurretCommand extends CommandBase {
     private double CLOSE_DISTANCE_SPEED = 1360;
     private double MIN_SPEED = 1250;
     private double MAX_SPEED = 1650;
-    private double FAR_DISTANCE_SPEED = 1560;
+    private double FAR_DISTANCE_SPEED = 1535;
+    private double FAR_DISTANCE_SPEED_BLUE = 1550;
+    private double FAR_DISTANCE_SPEED_RED = 1540;
     private double targetDistance = 0;
     private double RED_GOAL_X = -55.64;
     private double RED_GOAL_Y = 58.37;
@@ -274,6 +276,7 @@ public class AutoAimTurretCommand extends CommandBase {
             flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
             turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
             turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
+            FAR_DISTANCE_SPEED = FAR_DISTANCE_SPEED_BLUE;
         }
         if (team == Team.Red){
             goal_X = RED_GOAL_X;
@@ -282,6 +285,7 @@ public class AutoAimTurretCommand extends CommandBase {
             flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
             turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
             turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
+            FAR_DISTANCE_SPEED = FAR_DISTANCE_SPEED_RED;
         }
 
         // * * * * Flywheel SPeed Calculation  * * * *
@@ -375,17 +379,34 @@ public class AutoAimTurretCommand extends CommandBase {
         }*/
 
         // * * * * Reset Robot position * * * *
-        if ((robot.driver.getButton(GamepadKeys.Button.B))){
+        if ((robot.driver.getButton(GamepadKeys.Button.B))) {
             if (team == Team.Blue) {
                 odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXBlue_B, robotResetPosYBlue_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngleBlue)));
             }
             if (team == Team.Red) {
                 odo.setPosition(new Pose2D(DistanceUnit.INCH, robotResetPosXRed_B, robotResetPosYRed_B, AngleUnit.RADIANS, Math.toRadians(robotResetAngleRed)));
             }
-                odo.update();
-                calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (totalTurretAngle));
-                turretOdoAutoAimEnabled = true;
-         }
+            odo.update();
+            calTurretRelativeAngleOffset = targetFieldAngle - (-(Math.toRadians(robotResetAngle)) + (totalTurretAngle));
+            turretOdoAutoAimEnabled = true;
+
+//            int calcounter = 0;
+//
+//            while (calcounter <= 500){
+//                calcounter++;
+//                if (calcounter > 0 && calcounter < 100) {
+//                    scoringShooterSubsystem.lightGreen();
+//                } else if (calcounter > 101 && calcounter < 200) {
+//                    scoringShooterSubsystem.lightRed();
+//                } else if (calcounter > 201 && calcounter < 300) {
+//                    scoringShooterSubsystem.lightGreen();
+//                } else if (calcounter > 301 && calcounter < 400) {
+//                    scoringShooterSubsystem.lightRed();
+//                } else if (calcounter > 401) {
+//                    scoringShooterSubsystem.lightGreen();
+//                }
+//           }
+        }
 
         if ((robot.driver.getButton(GamepadKeys.Button.A))){
             if (team == Team.Blue) {
