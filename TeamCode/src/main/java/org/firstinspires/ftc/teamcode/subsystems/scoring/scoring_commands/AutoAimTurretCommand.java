@@ -63,12 +63,14 @@ public class AutoAimTurretCommand extends CommandBase {
 
     private double CLOSE_DISTANCE = 80;
     private double FAR_DISTANCE = 118;
-    private double CLOSE_DISTANCE_SPEED = 1450;
-    private double MIN_SPEED = 1200;
-    private double MAX_SPEED = 1700;
+    private double CLOSE_HOOD_DISTANCE = 17;
+    private double FAR_HOOD_DISTANCE = 85;
+    public static double CLOSE_DISTANCE_SPEED = 1375;
+    public static double MIN_SPEED = 1200;
+    public static double MAX_SPEED = 1710;
     private double FAR_DISTANCE_SPEED = 1560;
-    private double FAR_DISTANCE_SPEED_BLUE = 1580;
-    private double FAR_DISTANCE_SPEED_RED = 1700;
+    private double FAR_DISTANCE_SPEED_BLUE = 1710;
+    public static double FAR_DISTANCE_SPEED_RED = 1710;
     private double targetDistance = 0;
     private double RED_GOAL_X = -55.64;
     private double RED_GOAL_Y = 58.37;
@@ -84,10 +86,11 @@ public class AutoAimTurretCommand extends CommandBase {
     private double flywheelRobotPosY = 0;
     private double hoodRobotPosX = 0;
     private double hoodRobotPosY = 0;
-    private double HOOD_CLOSE_POS = 0.3;
-    private double HOOD_FAR_POS = 0.75;
-    private double MIN_POS = 0.3;
-    private double MAX_POS = 0.75;
+    public static double HOOD_FAR_POS = 0.675;
+    public static double HOOD_CLOSE_FAR_POS = 0.2;
+    public static double HOOD_CLOSE_CLOSE_POS = 0.4;
+    public static double MIN_POS = 0.25;
+    public static double MAX_POS = 0.675;
     private double hoodPos;
     private double TURRET_MANUAL_CONTROL_THRESHOLD = 0.1;
     private double TURRET_LIMELIGHT_CONTROL_THRESHOLD = 10;
@@ -301,12 +304,18 @@ public class AutoAimTurretCommand extends CommandBase {
 
         // * * * * Hood Pos Calculation  * * * *
         // * * * * * * * * * * * * * * * * * * * * * *
-        targetDistance = Math.hypot(goal_X - hoodRobotPosX, goal_Y - hoodRobotPosY);
+        if (turretRobotPosX > 8){
+            hoodPos = HOOD_FAR_POS;
+            scoringShooterSubsystem.setHoodPosition(hoodPos);
+        }
+        else {
+            targetDistance = Math.hypot(goal_X - hoodRobotPosX, goal_Y - hoodRobotPosY);
 
-        hoodPos = HOOD_CLOSE_POS + (targetDistance - CLOSE_DISTANCE) * ((HOOD_CLOSE_POS - HOOD_FAR_POS) / (FAR_DISTANCE - CLOSE_DISTANCE));
-        hoodPos = Math.max(hoodPos, MIN_POS);
-        hoodPos = Math.min(hoodPos, MAX_POS);
-        scoringShooterSubsystem.setHoodPosition(hoodPos);
+            hoodPos = HOOD_CLOSE_CLOSE_POS + (targetDistance - CLOSE_HOOD_DISTANCE) * ((HOOD_CLOSE_CLOSE_POS - HOOD_CLOSE_FAR_POS) / (FAR_HOOD_DISTANCE - CLOSE_HOOD_DISTANCE));
+            hoodPos = Math.max(hoodPos, MIN_POS);
+            hoodPos = Math.min(hoodPos, MAX_POS);
+            scoringShooterSubsystem.setHoodPosition(hoodPos);
+        }
 
         // * * * * Flywheel Speed Calculation  * * * *
         // * * * * * * * * * * * * * * * * * * * * * *
@@ -526,7 +535,7 @@ public class AutoAimTurretCommand extends CommandBase {
                 targetTurretAngle,
                 robotResetAngle,
                 calTurretRelativeAngleOffset,
-                maxTurretnAngleLimit,
+                hoodPos,
                 turretZeroOffsetAngle,
                 AutoPose,
                 EndTurretAngle);
