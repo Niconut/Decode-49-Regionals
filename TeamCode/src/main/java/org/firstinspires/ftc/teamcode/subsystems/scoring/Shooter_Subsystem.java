@@ -33,7 +33,6 @@ public class Shooter_Subsystem extends SubsystemBase {
     public IMU imu;
     public final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     private Servo LightRight;
-    private Servo servoHood;
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
     private Limelight3A limelight;
@@ -70,8 +69,6 @@ public class Shooter_Subsystem extends SubsystemBase {
         limelight.start();
         servoTurret = robot.hardwareMap.get(CRServo.class, "ScoringTurret");    //  port 0
         servoTurret.setDirection(CRServo.Direction.FORWARD);
-        servoHood = robot.hardwareMap.get(Servo.class, "ScoringHood");
-        servoHood.setDirection(Servo.Direction.REVERSE);
         LightRight = robot.hardwareMap.get(Servo.class, "LightRight");
         ScoringShooter = robot.hardwareMap.get(DcMotorEx.class, "ScoringShooter");
         this.ScoringShooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -136,7 +133,6 @@ public class Shooter_Subsystem extends SubsystemBase {
     public void closePortal(){
         visionPortal.close();
     }
-    public void setHoodPosition(double position){servoHood.setPosition(position);}
     public void setTurretPower(double power) {
         servoTurret.setPower(power);
     }
@@ -236,4 +232,5 @@ public class Shooter_Subsystem extends SubsystemBase {
     public void lightRed(){
         LightRight.setPosition(0.280);
     }
+
 }

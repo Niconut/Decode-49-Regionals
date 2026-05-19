@@ -63,12 +63,12 @@ public class AutoAimTurretCommand extends CommandBase {
 
     private double CLOSE_DISTANCE = 80;
     private double FAR_DISTANCE = 118;
-    private double CLOSE_DISTANCE_SPEED = 1450;
-    private double MIN_SPEED = 1200;
-    private double MAX_SPEED = 1700;
+    private double CLOSE_DISTANCE_SPEED = 1360;
+    private double MIN_SPEED = 1250;
+    private double MAX_SPEED = 1650;
     private double FAR_DISTANCE_SPEED = 1560;
     private double FAR_DISTANCE_SPEED_BLUE = 1580;
-    private double FAR_DISTANCE_SPEED_RED = 1700;
+    private double FAR_DISTANCE_SPEED_RED = 1540;
     private double targetDistance = 0;
     private double RED_GOAL_X = -55.64;
     private double RED_GOAL_Y = 58.37;
@@ -82,13 +82,6 @@ public class AutoAimTurretCommand extends CommandBase {
     private double turretRobotPosY = 0;
     private double flywheelRobotPosX = 0;
     private double flywheelRobotPosY = 0;
-    private double hoodRobotPosX = 0;
-    private double hoodRobotPosY = 0;
-    private double HOOD_CLOSE_POS = 0.3;
-    private double HOOD_FAR_POS = 0.75;
-    private double MIN_POS = 0.3;
-    private double MAX_POS = 0.75;
-    private double hoodPos;
     private double TURRET_MANUAL_CONTROL_THRESHOLD = 0.1;
     private double TURRET_LIMELIGHT_CONTROL_THRESHOLD = 10;
     private double robotResetPosX = 0;
@@ -283,8 +276,6 @@ public class AutoAimTurretCommand extends CommandBase {
             flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
             turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
             turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
-            hoodRobotPosX = robotPose.getX(DistanceUnit.INCH);
-            hoodRobotPosY = robotPose.getY(DistanceUnit.INCH);
             FAR_DISTANCE_SPEED = FAR_DISTANCE_SPEED_BLUE;
         }
         if (team == Team.Red){
@@ -294,21 +285,10 @@ public class AutoAimTurretCommand extends CommandBase {
             flywheelRobotPosY = robotPose.getY(DistanceUnit.INCH);
             turretRobotPosX = robotPose.getX(DistanceUnit.INCH);
             turretRobotPosY = robotPose.getY(DistanceUnit.INCH);
-            hoodRobotPosX = robotPose.getX(DistanceUnit.INCH);
-            hoodRobotPosY = robotPose.getY(DistanceUnit.INCH);
             FAR_DISTANCE_SPEED = FAR_DISTANCE_SPEED_RED;
         }
 
-        // * * * * Hood Pos Calculation  * * * *
-        // * * * * * * * * * * * * * * * * * * * * * *
-        targetDistance = Math.hypot(goal_X - hoodRobotPosX, goal_Y - hoodRobotPosY);
-
-        hoodPos = HOOD_CLOSE_POS + (targetDistance - CLOSE_DISTANCE) * ((HOOD_CLOSE_POS - HOOD_FAR_POS) / (FAR_DISTANCE - CLOSE_DISTANCE));
-        hoodPos = Math.max(hoodPos, MIN_POS);
-        hoodPos = Math.min(hoodPos, MAX_POS);
-        scoringShooterSubsystem.setHoodPosition(hoodPos);
-
-        // * * * * Flywheel Speed Calculation  * * * *
+        // * * * * Flywheel SPeed Calculation  * * * *
         // * * * * * * * * * * * * * * * * * * * * * *
         targetDistance = Math.hypot(goal_X - flywheelRobotPosX, goal_Y - flywheelRobotPosY);
 
