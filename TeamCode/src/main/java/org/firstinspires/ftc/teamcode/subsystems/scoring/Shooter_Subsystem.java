@@ -69,7 +69,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         limelight = robot.hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
         servoTurret = robot.hardwareMap.get(CRServo.class, "ScoringTurret");    //  port 0
-        servoTurret.setDirection(CRServo.Direction.FORWARD);
+        servoTurret.setDirection(CRServo.Direction.REVERSE);
         servoHood = robot.hardwareMap.get(Servo.class, "ScoringHood");
         servoHood.setDirection(Servo.Direction.REVERSE);
         LightRight = robot.hardwareMap.get(Servo.class, "LightRight");
@@ -78,7 +78,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         this.ScoringShooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.ScoringShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.ScoringShooter.setVelocityPIDFCoefficients(kp,ki,kd,kf);
-        this.ScoringShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.ScoringShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         this.telemetry = robot.telemetry;
         if (team == Team.RED){
             limelight.pipelineSwitch(1);

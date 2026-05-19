@@ -87,9 +87,9 @@ public class AutoAimTurretCommand extends CommandBase {
     private double hoodRobotPosX = 0;
     private double hoodRobotPosY = 0;
     public static double HOOD_FAR_POS = 0.675;
-    public static double HOOD_CLOSE_FAR_POS = 0.5;
-    public static double HOOD_CLOSE_CLOSE_POS = 0.6;
-    public static double MIN_POS = 0.5;
+    public static double HOOD_CLOSE_FAR_POS = 0.2;
+    public static double HOOD_CLOSE_CLOSE_POS = 0.4;
+    public static double MIN_POS = 0.25;
     public static double MAX_POS = 0.675;
     private double hoodPos;
     private double TURRET_MANUAL_CONTROL_THRESHOLD = 0.1;
