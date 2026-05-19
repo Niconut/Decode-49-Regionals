@@ -69,7 +69,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         limelight = robot.hardwareMap.get(Limelight3A.class, "limelight");
         limelight.start();
         servoTurret = robot.hardwareMap.get(CRServo.class, "ScoringTurret");    //  port 0
-        servoTurret.setDirection(CRServo.Direction.REVERSE);
+        servoTurret.setDirection(CRServo.Direction.FORWARD);
         servoHood = robot.hardwareMap.get(Servo.class, "ScoringHood");
         servoHood.setDirection(Servo.Direction.REVERSE);
         LightRight = robot.hardwareMap.get(Servo.class, "LightRight");
@@ -180,7 +180,7 @@ public class Shooter_Subsystem extends SubsystemBase {
             double targetTurretAngle,
             double robotResetAngle,
             double calTurretRelativeAngleOffset,
-            double hoodPos,
+            double maxTurretnAngleLimitRight,
             double turretZeroOffsetAngle,
             Pose2d autoEndPosition,
             double turretEndAngle
@@ -189,7 +189,6 @@ public class Shooter_Subsystem extends SubsystemBase {
         panelsTelemetry.addData("targetBearing", turretBearing);
         panelsTelemetry.addData("shooterPower", shooterPower);
         panelsTelemetry.addData("targetDistance", targetDistance);
-        telemetry.addData("hoodPos", hoodPos);
         telemetry.addData("targetPower", power);
         telemetry.addData("targetBearing", turretBearing);
         telemetry.addData("shooterPower", shooterPower);
