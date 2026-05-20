@@ -63,12 +63,12 @@ public class AutoAimTurretCommand extends CommandBase {
 
     private double CLOSE_DISTANCE = 80;
     private double FAR_DISTANCE = 118;
-    private double CLOSE_DISTANCE_SPEED = 1450;
+    private double CLOSE_DISTANCE_SPEED = 1360;
     private double MIN_SPEED = 1200;
     private double MAX_SPEED = 1700;
     private double FAR_DISTANCE_SPEED = 1560;
     private double FAR_DISTANCE_SPEED_BLUE = 1580;
-    private double FAR_DISTANCE_SPEED_RED = 1700;
+    private double FAR_DISTANCE_SPEED_RED = 1580;
     private double targetDistance = 0;
     private double RED_GOAL_X = -55.64;
     private double RED_GOAL_Y = 58.37;
@@ -85,9 +85,9 @@ public class AutoAimTurretCommand extends CommandBase {
     private double hoodRobotPosX = 0;
     private double hoodRobotPosY = 0;
     private double HOOD_CLOSE_POS = 0.3;
-    private double HOOD_FAR_POS = 0.75;
+    private double HOOD_FAR_POS = 0.16;
     private double MIN_POS = 0.3;
-    private double MAX_POS = 0.75;
+    private double MAX_POS = 0.16;
     private double hoodPos;
     private double TURRET_MANUAL_CONTROL_THRESHOLD = 0.1;
     private double TURRET_LIMELIGHT_CONTROL_THRESHOLD = 10;
