@@ -71,14 +71,14 @@ public class Shooter_Subsystem extends SubsystemBase {
         servoTurret = robot.hardwareMap.get(CRServo.class, "ScoringTurret");    //  port 0
         servoTurret.setDirection(CRServo.Direction.FORWARD);
         servoHood = robot.hardwareMap.get(Servo.class, "ScoringHood");
-        servoHood.setDirection(Servo.Direction.REVERSE);
+        servoHood.setDirection(Servo.Direction.FORWARD);
         LightRight = robot.hardwareMap.get(Servo.class, "LightRight");
         ScoringShooter = robot.hardwareMap.get(DcMotorEx.class, "ScoringShooter");
         this.ScoringShooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         this.ScoringShooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.ScoringShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.ScoringShooter.setVelocityPIDFCoefficients(kp,ki,kd,kf);
-        this.ScoringShooter.setDirection(DcMotorSimple.Direction.FORWARD);
+        this.ScoringShooter.setDirection(DcMotorSimple.Direction.REVERSE);
         this.telemetry = robot.telemetry;
         if (team == Team.RED){
             limelight.pipelineSwitch(1);
@@ -193,6 +193,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         telemetry.addData("targetBearing", turretBearing);
         telemetry.addData("shooterPower", shooterPower);
         telemetry.addData("Distance", targetDistance);
+        telemetry.addData("PosX", servoHood.getPosition());
         telemetry.addData("PosX", robotPose.getX(DistanceUnit.INCH));
         telemetry.addData("PosY", robotPose.getY(DistanceUnit.INCH));
         telemetry.addData("Heading", robotPose.getHeading(AngleUnit.RADIANS));

@@ -63,12 +63,12 @@ public class AutoAimTurretCommand extends CommandBase {
 
     private double CLOSE_DISTANCE = 80;
     private double FAR_DISTANCE = 118;
-    private double CLOSE_DISTANCE_SPEED = 1360;
-    private double MIN_SPEED = 1200;
-    private double MAX_SPEED = 1700;
-    private double FAR_DISTANCE_SPEED = 1560;
-    private double FAR_DISTANCE_SPEED_BLUE = 1580;
-    private double FAR_DISTANCE_SPEED_RED = 1580;
+    public static double CLOSE_DISTANCE_SPEED = 1480;
+    public static double MIN_SPEED = 1200;
+    public static double MAX_SPEED = 1725;
+    public static double FAR_DISTANCE_SPEED = 1560;
+    private double FAR_DISTANCE_SPEED_BLUE = 1685;
+    public static double FAR_DISTANCE_SPEED_RED = 1685;
     private double targetDistance = 0;
     private double RED_GOAL_X = -55.64;
     private double RED_GOAL_Y = 58.37;
@@ -84,10 +84,10 @@ public class AutoAimTurretCommand extends CommandBase {
     private double flywheelRobotPosY = 0;
     private double hoodRobotPosX = 0;
     private double hoodRobotPosY = 0;
-    private double HOOD_CLOSE_POS = 0.3;
-    private double HOOD_FAR_POS = 0.16;
-    private double MIN_POS = 0.3;
-    private double MAX_POS = 0.16;
+    public static double HOOD_CLOSE_POS = 0.55;
+    public static double HOOD_FAR_POS = 0.42;
+    public static double MIN_POS = 0.42;
+    public static double MAX_POS = 0.8;
     private double hoodPos;
     private double TURRET_MANUAL_CONTROL_THRESHOLD = 0.1;
     private double TURRET_LIMELIGHT_CONTROL_THRESHOLD = 10;
@@ -303,7 +303,7 @@ public class AutoAimTurretCommand extends CommandBase {
         // * * * * * * * * * * * * * * * * * * * * * *
         targetDistance = Math.hypot(goal_X - hoodRobotPosX, goal_Y - hoodRobotPosY);
 
-        hoodPos = HOOD_CLOSE_POS + (targetDistance - CLOSE_DISTANCE) * ((HOOD_CLOSE_POS - HOOD_FAR_POS) / (FAR_DISTANCE - CLOSE_DISTANCE));
+        hoodPos = HOOD_CLOSE_POS + (targetDistance - CLOSE_DISTANCE) * ((HOOD_FAR_POS - HOOD_CLOSE_POS) / (FAR_DISTANCE - CLOSE_DISTANCE));
         hoodPos = Math.max(hoodPos, MIN_POS);
         hoodPos = Math.min(hoodPos, MAX_POS);
         scoringShooterSubsystem.setHoodPosition(hoodPos);
