@@ -78,7 +78,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         this.ScoringShooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.ScoringShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.ScoringShooter.setVelocityPIDFCoefficients(kp,ki,kd,kf);
-        this.ScoringShooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.ScoringShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         this.telemetry = robot.telemetry;
         if (team == Team.RED){
             limelight.pipelineSwitch(1);

@@ -130,7 +130,7 @@ public class MyRobot extends Robot {
 //        MyRobot.enable();
 
         if (mode == TeleOpMode.RED){
-            targetAngle = -1.5;
+            targetAngle = 1.5;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
             endgameKickstand = new Endgame_Kickstand(this);
@@ -221,8 +221,10 @@ public class MyRobot extends Robot {
             intakeFront.whileHeld(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
                                     new InstantCommand(()-> telemetry.addLine("Intake Artifacts From Front")),
+                                    new InstantCommand(()-> telemetry.addData("Shooter Sensor Triggered", shooterSensorTriggered)),
+                                    new InstantCommand(()-> telemetry.addData("Back Sensor Triggered", rearSensorTriggered)),
+                                    new InstantCommand(()-> telemetry.addData("Front Sensor Triggered", frontSensorTriggered)),
                                     new InstantCommand(()-> telemetry.update())
                             ),
                             new SequentialCommandGroup(
@@ -276,8 +278,10 @@ public class MyRobot extends Robot {
             driverIntakeFront.whileHeld(
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
-                                    new InstantCommand(()-> telemetry.clearAll()),
                                     new InstantCommand(()-> telemetry.addLine("Intake Artifacts From Front")),
+                                    new InstantCommand(()-> telemetry.addData("Shooter Sensor Triggered", shooterSensorTriggered)),
+                                    new InstantCommand(()-> telemetry.addData("Back Sensor Triggered", rearSensorTriggered)),
+                                    new InstantCommand(()-> telemetry.addData("Front Sensor Triggered", frontSensorTriggered)),
                                     new InstantCommand(()-> telemetry.update())
                             ),
                             new SequentialCommandGroup(
@@ -436,7 +440,7 @@ public class MyRobot extends Robot {
                                     new WaitCommand(CLOSE_SHOOT_GATE_OPEN_DELAY),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
                                     new WaitCommand(CLOSE_SHOOT_FIRST_BALL_DELAY),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.CLOSESHOOT_SHOOT_SHOOT),
                                     new WaitCommand(2000),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
                             )
@@ -480,7 +484,7 @@ public class MyRobot extends Robot {
                             new SequentialCommandGroup(
                                     new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
                                     new WaitCommand(FAR_SHOOT_GATE_OPEN_DELAY),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_SLOWREVERSE),
                                     new WaitCommand(FAR_SHOOT_FIRST_BALL_DELAY),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
                                     new WaitCommand(2000),
@@ -500,7 +504,7 @@ public class MyRobot extends Robot {
             );
         }
         else if (mode == TeleOpMode.BLUE){
-            targetAngle = 1.50;
+            targetAngle = 4;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, PostStorage.currentPose);
             endgameKickstand = new Endgame_Kickstand(this);

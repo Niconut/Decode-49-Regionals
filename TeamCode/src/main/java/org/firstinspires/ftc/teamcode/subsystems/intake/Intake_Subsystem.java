@@ -28,8 +28,9 @@ public class Intake_Subsystem extends SubsystemBase {
     public static double [] HALFSHOOT_SHOOT_SHOOT = {0.5, 0.5, -0.5};
     public static double [] THREE_QUARTERS_SHOOT = {0.75, 0.75, -0.75};
     public static double [] CLOSESHOOT_SHOOT_SHOOT = {1.0, 1.0, -1.0};
+    public static double[] OFF_SLOWFORWARD_SLOWREVERSE = {0, 0.75, -0.75};
     public static double[] OFF_OFF_FORWARD = {0, 0, 0.5};
-    public static double[] OFF_SLOWFORWARD_REVERSE = {0, 0.3, -1.0};
+    public static double[] OFF_SLOWFORWARD_REVERSE = {0, 1, -1.0};
     public static double[] FORWARD_SLOWFORWARD_OFF = {1.0, 0.5, 0};
     public static double[] SLOWFORWARD_SLOWFORWARD_OFF = {0.6, 0.75, 0};
     public static double[] OFF_OFF_REVERSE = {0, 0, -1.0};
@@ -70,6 +71,7 @@ public class Intake_Subsystem extends SubsystemBase {
         OFF_OFF_FORWARD,
         OFF_OFF_REVERSE,
         OFF_SLOWFORWARD_REVERSE,
+        OFF_SLOWFORWARD_SLOWREVERSE,
         OFF_OFF_SLOWREVERSE,
         FORWARD_SLOWFORWARD_OFF,
         SLOWFORWARD_SLOWFORWARD_OFF,
@@ -106,6 +108,7 @@ public class Intake_Subsystem extends SubsystemBase {
         midIntake = robot.hardwareMap.get(DcMotor.class, "midIntake");
 
         this.frontIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.frontIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.midIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         this.backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
@@ -126,6 +129,7 @@ public class Intake_Subsystem extends SubsystemBase {
             case OFF_OFF_REVERSE -> OFF_OFF_REVERSE;
             case OFF_OFF_SLOWREVERSE -> OFF_OFF_SLOWREVERSE;
             case OFF_SLOWFORWARD_REVERSE -> OFF_SLOWFORWARD_REVERSE;
+            case OFF_SLOWFORWARD_SLOWREVERSE -> OFF_SLOWFORWARD_SLOWREVERSE;
             case FORWARD_SLOWFORWARD_OFF -> FORWARD_SLOWFORWARD_OFF;
             case SLOWFORWARD_SLOWFORWARD_OFF -> SLOWFORWARD_SLOWFORWARD_OFF;
             case OFF_FORWARD_OFF -> OFF_FORWARD_OFF;

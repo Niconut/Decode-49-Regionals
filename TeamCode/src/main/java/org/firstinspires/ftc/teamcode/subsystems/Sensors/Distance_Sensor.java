@@ -24,16 +24,16 @@ public class Distance_Sensor extends SubsystemBase {
     }
 
     public boolean shootSensorTriggered(){
-        if ((shootSensor.getDistance(DistanceUnit.INCH) < 3.00)) return true;
+        if ((shootSensor.getDistance(DistanceUnit.INCH) < 6.00)) return true;
         else return false;
     }
 
     public boolean frontSensorTriggered(){
-        if ((frontSensor.getDistance(DistanceUnit.INCH) < 3.00)) return true;
+        if ((frontSensor.getDistance(DistanceUnit.INCH) < 6.00)) return true;
         else return false;
     }
     public boolean rearSensorTriggered(){
-        if ((rearSensor.getDistance(DistanceUnit.INCH) < 3.00)) return true;
+        if ((rearSensor.getDistance(DistanceUnit.INCH) < 6.00)) return true;
         else return false;
     }
 

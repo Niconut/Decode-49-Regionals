@@ -81,7 +81,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 turretBearing = (turretProp[0]);
                 double turretRange = (turretProp[1]);
                 if (team == Pipeline.BLUE) {
-                    targettx = -1.5;
+                    targettx = 0;
                 } else if (team == Pipeline.RED){
                     targettx = 1.5;
                 }

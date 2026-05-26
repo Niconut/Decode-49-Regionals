@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -31,6 +32,7 @@ public class Intake_Subsystem_Action{
         backIntake = hardwareMap.get(DcMotorEx.class, "backIntake");
         runtime = new ElapsedTime();
         this.frontIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.frontIntake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.midIntake.setDirection(DcMotorSimple.Direction.REVERSE);
         this.backIntake.setDirection(DcMotorSimple.Direction.REVERSE);
     }

@@ -7,16 +7,18 @@ import com.acmerobotics.roadrunner.Action;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 @Configurable
 public class Scoring_Shooter_Action {
     public DcMotorEx ScoringShooter;
-    public static double SHOOT = 1350;
-    public static double SECONDSHOOT = 1320;
+    public static double SHOOT = 1480;
+    public static double SECONDSHOOT = 1300;
     public static double FAR = 1675;
     public static double FARTHER = 1650;
     public Scoring_Shooter_Action(HardwareMap hardwareMap){
         ScoringShooter = hardwareMap.get(DcMotorEx.class, "ScoringShooter");
+        this.ScoringShooter.setDirection(DcMotorSimple.Direction.FORWARD);
         this.ScoringShooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         this.ScoringShooter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.ScoringShooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
