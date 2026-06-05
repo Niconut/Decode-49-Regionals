@@ -24,7 +24,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Distance_Sensor;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.LedStrips;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Light_Indicator;
+import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Commands.ActuateLedStripsCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Commands.ActuateLightIndicatorCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.SlowModeCommand;
@@ -63,6 +65,7 @@ public class MyRobot extends Robot {
     public Light_Indicator lightIndicator;
     public Intake_Indexer intakeIndexer;
     public Scoring_Gate scoringGate;
+    public LedStrips ledStrips;
     public GamepadHandling gamepadHandling;
     public GamepadEx driver;
     public GamepadEx operator;
@@ -81,6 +84,7 @@ public class MyRobot extends Robot {
     public SlowModeCommand slowModeCommand;
     public AutoAimTurretCommand autoAimCommand;
     public MoveScoringGateCommand gateCommand;
+    public ActuateLedStripsCommand ledStripsCommand;
 
     public static ElapsedTime shooterTime;
     public static boolean startShooter = true;
@@ -138,7 +142,7 @@ public class MyRobot extends Robot {
 //        MyRobot.enable();
 
         if (mode == TeleOpMode.RED){
-            targetAngle = 1.5;
+            targetAngle = -0.5;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
             endgameKickstand = new Endgame_Kickstand(this);
@@ -521,6 +525,7 @@ public class MyRobot extends Robot {
             scoringGate = new Scoring_Gate(this);
             shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.BLUE);
             lightIndicator = new Light_Indicator(this);
+            ledStrips = new LedStrips(this);
             register(drive, intakeSubsystem, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
 
             defaultDriveCommand = new DefaultDriveCommand(drive,
@@ -543,6 +548,10 @@ public class MyRobot extends Robot {
                      startShooter,
                     operator::getRightX,
                     AutoAimTurretCommand.Team.Blue
+            );
+
+            ledStripsCommand = new ActuateLedStripsCommand(
+                    ledStrips
             );
 
             CommandScheduler.getInstance().run();

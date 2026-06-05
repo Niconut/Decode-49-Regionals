@@ -4,63 +4,43 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
+import org.firstinspires.ftc.teamcode.subsystems.Prism.Color;
+import org.firstinspires.ftc.teamcode.subsystems.Prism.GoBildaPrismDriver;
+import org.firstinspires.ftc.teamcode.subsystems.Prism.PrismAnimations;
 import org.firstinspires.ftc.teamcode.subsystems.robot.MyRobot;
 
 public class LedStrips extends SubsystemBase {
     private MyRobot robot;
-    private Servo LightSensorLeft;
-
-    private static double WHITE = 0.730;
-    private static double PURPLE = 0.720;
-    private static double BLUE = 0.618;
-    private static double GREEN = 0.5;
-    private static double YELLOW = 0.345;
-    private static double RED = 0.280;
-    private static double SAGE = 0.444;
+    private GoBildaPrismDriver ledStrip;
+    private PrismAnimations.Solid solid = new PrismAnimations.Solid(Color.WHITE);
 
     public enum LightIndicatorState {
-        BLUE,
-        GREEN,
-        YELLOW,
         RED,
+        SCARLETRED,
         PURPLE,
-        WHITE,
-        SAGE
+        GREEN,
+        ORANGE
     }
 
     public LedStrips(MyRobot robot) {
         this.robot = robot;
-        this.LightSensorLeft = robot.hardwareMap.get(Servo.class, "LightLeft");
+        this.ledStrip = robot.hardwareMap.get(GoBildaPrismDriver.class, "LedStrips");
         //this.LightSensorRight = robot.hardwareMap.get(Servo.class, "LightRight");
     }
 
-    public void setPosition(double position){
-        LightSensorLeft.setPosition(position);
-    }
+//    public void setPosition(double color){
+//        solid.setPrimaryColor();
+//    }
 
-    public void setStateLeft(LightIndicatorState state){
-        double pos = switch (state){
-            case RED -> RED;
-            case BLUE -> BLUE;
-            case GREEN -> GREEN;
-            case YELLOW -> YELLOW;
-            case SAGE -> SAGE;
-            case WHITE -> WHITE;
-            case PURPLE -> PURPLE;
-        };
-        LightSensorLeft.setPosition(pos);
+    public void setState(LightIndicatorState state){
+        switch (state) {
+            case RED -> {solid.setPrimaryColor(Color.RED);}
+            case GREEN -> {solid.setPrimaryColor(0,100,4);}
+            case PURPLE -> {solid.setPrimaryColor(Color.PURPLE);}
+            case ORANGE -> {solid.setPrimaryColor(Color.ORANGE);}
+            case SCARLETRED -> {solid.setPrimaryColor(255,50,0);}
+        }
+        ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, solid);
+        ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_1, solid);
     }
-
-    /*public void setStateRight(LightIndicatorState state){
-        double pos = switch (state){
-            case RED -> RED;
-            case BLUE -> BLUE;
-            case GREEN -> GREEN;
-            case YELLOW -> YELLOW;
-            case SAGE -> SAGE;
-            case WHITE -> WHITE;
-            case PURPLE -> PURPLE;
-        };
-        LightSensorRight.setPosition(pos);
-    }*/
 }
