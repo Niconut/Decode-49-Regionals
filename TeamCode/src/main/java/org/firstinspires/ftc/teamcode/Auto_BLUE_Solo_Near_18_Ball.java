@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.InstantAction;
-import com.acmerobotics.roadrunner.InstantFunction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -14,9 +12,9 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Distance_Sensor_Action;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Odom_Storage_Action;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Turret_Analog_Input_Action;
@@ -27,16 +25,16 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
-import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
-
 @Configurable
-@Autonomous (name = "BLUE Solo Near 15", group = "Blue Alliance")
-public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
+@Autonomous (name = "BLUE Solo Near 18?", group = "Blue Alliance")
+public class Auto_BLUE_Solo_Near_18_Ball extends LinearOpMode {
 
     private MecanumDrive drive;
     Action TrajectoryShootBallsAndPrep,
             TrajectoryGateBackUp,
             TrajectoryShootBalls3,
+            TrajectoryGateBackUp2,
+            TrajectoryShootBalls4,
             TrajectoryBackPickUp,
             TrajectoryFrontPickUp,
             TrajectoryPark;
@@ -97,25 +95,35 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
                 .splineToConstantHeading(new Vector2d(15,-50), Math.toRadians(90), new TranslationalVelConstraint(70))
                 .splineToConstantHeading(new Vector2d(-14,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryGateBackUp = trajectoryShootBallsandPickup.endTrajectory().fresh()
-                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
-//                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToLinearHeading(new Pose2d(14, -71, Math.toRadians(-125)), Math.toRadians(-90), new TranslationalVelConstraint(70));
-
-        TrajectoryActionBuilder trajectoryShootBalls3 = trajectoryGateBackUp.endTrajectory().fresh()
-                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(-12, -20, Math.toRadians(-90)), Math.toRadians(90), new TranslationalVelConstraint(70));
-//                .splineToConstantHeading(new Vector2d(-12,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
-//                .strafeToLinearHeading(new Vector2d(-6,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
-
-        TrajectoryActionBuilder trajectoryFrontPickUp = trajectoryShootBalls3.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryFrontPickUp = trajectoryShootBallsandPickup.endTrajectory().fresh()
                 .splineToConstantHeading(new Vector2d(-11, -32), Math.toRadians(-90))
                 .lineToY(-50, new TranslationalVelConstraint(40))
                 .splineToConstantHeading(new Vector2d(-11,-30), Math.toRadians(90), new TranslationalVelConstraint(40))
                 .splineToConstantHeading(new Vector2d(-12,-20), Math.toRadians(-90));
 
+        TrajectoryActionBuilder trajectoryGateBackUp = trajectoryFrontPickUp.endTrajectory().fresh()
+//                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
+//                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .splineToLinearHeading(new Pose2d(14, -72, Math.toRadians(-125)), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
-        TrajectoryActionBuilder trajectoryBackPickUp = trajectoryFrontPickUp.endTrajectory().fresh()
+        TrajectoryActionBuilder trajectoryShootBalls3 = trajectoryGateBackUp.endTrajectory().fresh()
+//                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-12, -20, Math.toRadians(-90)), Math.toRadians(90), new TranslationalVelConstraint(70));
+//                .splineToConstantHeading(new Vector2d(-12,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
+//                .strafeToLinearHeading(new Vector2d(-6,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
+
+        TrajectoryActionBuilder trajectoryGateBackUp2 = trajectoryShootBalls3.endTrajectory().fresh()
+//                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
+//                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
+                .splineToLinearHeading(new Pose2d(14, -72, Math.toRadians(-125)), Math.toRadians(-90), new TranslationalVelConstraint(70));
+
+        TrajectoryActionBuilder trajectoryShootBalls4 = trajectoryGateBackUp2.endTrajectory().fresh()
+//                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(-12, -20, Math.toRadians(-90)), Math.toRadians(90), new TranslationalVelConstraint(70));
+//                .splineToConstantHeading(new Vector2d(-12,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
+//                .strafeToLinearHeading(new Vector2d(-6,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
+
+        TrajectoryActionBuilder trajectoryBackPickUp = trajectoryShootBalls4.endTrajectory().fresh()
                 .splineToConstantHeading(new Vector2d(30, -30), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 .lineToY(-58, new TranslationalVelConstraint(40))
                 .splineToConstantHeading(new Vector2d(30,-46), Math.toRadians(90), new TranslationalVelConstraint(70))
@@ -131,6 +139,8 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
         TrajectoryGateBackUp = trajectoryGateBackUp.build();
         TrajectoryBackPickUp = trajectoryBackPickUp.build();
         TrajectoryFrontPickUp = trajectoryFrontPickUp.build();
+        TrajectoryGateBackUp2 = trajectoryGateBackUp2.build();
+        TrajectoryShootBalls4 = trajectoryShootBalls4.build();
         TrajectoryPark = trajectoryPark.build();
     }
 
@@ -175,6 +185,16 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
                             new SleepAction(0.75),
                             scoringGate.CloseGate(),
                             new ParallelAction(
+                                TrajectoryFrontPickUp,
+                                FAST_INTAKE(intakeSubsystem, distanceSensor)
+                            ),
+                            scoringGate.OpenGate(),
+                            new SleepAction(0.35),
+                            SHOOT_REAR_MID_FRONT(intakeSubsystem),
+                            new SleepAction(0.75),
+                            // pickup 3rd set
+                            scoringGate.CloseGate(),
+                            new ParallelAction(
                                     TrajectoryGateBackUp,
                                     new SequentialAction(
                                             new SleepAction(0.5),
@@ -192,14 +212,21 @@ public class Auto_BLUE_Solo_Near_15_Ball extends LinearOpMode {
                             // pickup 2nd set
                             scoringGate.CloseGate(),
                             new ParallelAction(
-                                TrajectoryFrontPickUp,
-                                FAST_INTAKE(intakeSubsystem, distanceSensor)
+                                    TrajectoryGateBackUp2,
+                                    new SequentialAction(
+                                            new SleepAction(0.5),
+                                            FAST_INTAKE(intakeSubsystem, distanceSensor)
+                                    )
+                            ),
+                            new ParallelAction(
+                                    TrajectoryShootBalls4,
+                                    scoringShooter.CloseShooter2()
                             ),
                             scoringGate.OpenGate(),
                             new SleepAction(0.35),
                             SHOOT_REAR_MID_FRONT(intakeSubsystem),
                             new SleepAction(0.75),
-                            // pickup 3rd set
+                            // pickup 2nd set
                             scoringGate.CloseGate(),
                             new ParallelAction(
                                 TrajectoryBackPickUp,

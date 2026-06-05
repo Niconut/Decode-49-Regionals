@@ -29,16 +29,16 @@ public class Distance_Sensor_Action extends SubsystemBase {
     }
 
     public boolean shootSensorTriggered(){
-        if ((shootSensor.getDistance(DistanceUnit.INCH) < 5.00) || elapsedTime.seconds() > 1.75) return true;
+        if ((shootSensor.getDistance(DistanceUnit.INCH) < 5.00) || elapsedTime.seconds() > 1.5) return true;
         else return false;
     }
 
     public boolean frontSensorTriggered(){
-        if ((frontSensor.getDistance(DistanceUnit.INCH) < 7.00) || elapsedTime.seconds() > 1.00) return true;
+        if ((frontSensor.getDistance(DistanceUnit.INCH) < 7.00) || elapsedTime.seconds() > 0.75) return true;
         else return false;
     }
     public boolean rearSensorTriggered(){
-        if ((rearSensor.getDistance(DistanceUnit.INCH) < 5.00) || elapsedTime.seconds() > 1.25) return true;
+        if ((rearSensor.getDistance(DistanceUnit.INCH) < 5.00) || elapsedTime.seconds() > 1.00) return true;
         else return false;
     }
     public class shootTriggered implements Action{

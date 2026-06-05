@@ -63,7 +63,7 @@ public class AutoAimTurretCommand extends CommandBase {
 
     private double CLOSE_DISTANCE = 80;
     private double FAR_DISTANCE = 118;
-    public static double CLOSE_DISTANCE_SPEED = 1375;
+    public static double CLOSE_DISTANCE_SPEED = 1400;
     public static double MIN_SPEED = 1200;
     public static double MAX_SPEED = 1725;
     public static double FAR_DISTANCE_SPEED = 1560;

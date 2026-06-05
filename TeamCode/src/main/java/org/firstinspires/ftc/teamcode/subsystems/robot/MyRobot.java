@@ -17,6 +17,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -42,6 +43,8 @@ import org.firstinspires.ftc.teamcode.subsystems.PostStorage;
 
 import com.bylazar.gamepad.PanelsGamepad;
 
+import org.firstinspires.ftc.teamcode.subsystems.gamepads.GamepadHandling;
+
 public class MyRobot extends Robot {
     public GamepadManager g1Manager = PanelsGamepad.INSTANCE.getFirstManager();
     public GamepadManager g2Manager = PanelsGamepad.INSTANCE.getSecondManager();
@@ -60,6 +63,7 @@ public class MyRobot extends Robot {
     public Light_Indicator lightIndicator;
     public Intake_Indexer intakeIndexer;
     public Scoring_Gate scoringGate;
+    public GamepadHandling gamepadHandling;
     public GamepadEx driver;
     public GamepadEx operator;
     public DistanceUnit distanceUnit;
@@ -86,6 +90,9 @@ public class MyRobot extends Robot {
     public static int FAR_SHOOT_GATE_OPEN_DELAY = 100;
     public static int FAR_SHOOT_FIRST_BALL_DELAY = 25;
     public static double SHOOTING_DISTANCE_THRESHOLD = 90;
+    private Gamepad.RumbleEffect ballRumble = new Gamepad.RumbleEffect.Builder()
+            .addStep(0.5, 0.5, 500)  //  Rumble right motor 100% for 500 mSec
+            .build();
 
     public enum TeleOpModeType {
         Field, Robot
@@ -103,6 +110,7 @@ public class MyRobot extends Robot {
         this.telemetry = opMode.telemetry;
         this.driver = new GamepadEx(opMode.gamepad1);
         this.operator = new GamepadEx(opMode.gamepad2);
+
         var g1 = g1Manager.asCombinedFTCGamepad(opMode.gamepad1);
         var g2 = g2Manager.asCombinedFTCGamepad(opMode.gamepad2);
         initTele(mode);
@@ -504,7 +512,7 @@ public class MyRobot extends Robot {
             );
         }
         else if (mode == TeleOpMode.BLUE){
-            targetAngle = 4;
+            targetAngle = -1.5;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, PostStorage.currentPose);
             endgameKickstand = new Endgame_Kickstand(this);
@@ -686,6 +694,7 @@ public class MyRobot extends Robot {
                                             new ParallelCommandGroup(
                                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT),
                                                     new ActuateLightIndicatorCommand(lightIndicator, Light_Indicator.LightIndicatorState.BLUE)
+
                                             ),
                                             new ConditionalCommand(
                                                     new ParallelCommandGroup(
@@ -781,7 +790,7 @@ public class MyRobot extends Robot {
                                     new WaitCommand(CLOSE_SHOOT_GATE_OPEN_DELAY),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
                                     new WaitCommand(CLOSE_SHOOT_FIRST_BALL_DELAY),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.CLOSESHOOT_SHOOT_SHOOT),
                                     new WaitCommand(2000),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
                             )
@@ -815,9 +824,9 @@ public class MyRobot extends Robot {
                             new SequentialCommandGroup(
                                     new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
                                     new WaitCommand(FAR_SHOOT_GATE_OPEN_DELAY),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_SLOWREVERSE),
                                     new WaitCommand(FAR_SHOOT_FIRST_BALL_DELAY),
-                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
                                     new WaitCommand(2000),
                                     new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
                             )

@@ -6,7 +6,8 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class GamepadHandling {
+public class
+GamepadHandling {
     private double DEAD_ZONE = .1;
 
     private GamepadEx driverGamepad;
