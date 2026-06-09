@@ -68,7 +68,7 @@ public class AutoAimTurretCommand extends CommandBase {
     public static double MAX_SPEED = 1725;
     public static double FAR_DISTANCE_SPEED = 1560;
     public static double FAR_DISTANCE_SPEED_BLUE = 1575;
-    public static double FAR_DISTANCE_SPEED_RED = 1625;
+    public static double FAR_DISTANCE_SPEED_RED = 1600;
     private double targetDistance = 0;
     private double RED_GOAL_X = -55.64;
     private double RED_GOAL_Y = 58.37;
@@ -337,8 +337,8 @@ public class AutoAimTurretCommand extends CommandBase {
         // Calculate Turret angle relative to robot heading
         robotHeading =  -robotPose.getHeading(AngleUnit.RADIANS);
 //        targetRelativeAngle =  calTurretRelativeAngleOffset + Math.toRadians(robotResetAngle) + totalTurretAngle - robotHeading;
-//        targetRelativeAngle =  robotStartHeading + (robotHeading - robotStartHeading) + (totalTurretAngle + calTurretRelativeAngleOffset);
-        targetRelativeAngle =  (robotHeading) + (totalTurretAngle + calTurretRelativeAngleOffset);
+        targetRelativeAngle =  robotStartHeading + (robotHeading - robotStartHeading) + (totalTurretAngle + calTurretRelativeAngleOffset);
+//        targetRelativeAngle =  (totalTurretAngle + calTurretRelativeAngleOffset);
 //        if (team == Team.Blue) {
             while (targetRelativeAngle > 0) targetRelativeAngle -= TWO_PI;
             while (targetRelativeAngle < -TWO_PI) targetRelativeAngle += TWO_PI;

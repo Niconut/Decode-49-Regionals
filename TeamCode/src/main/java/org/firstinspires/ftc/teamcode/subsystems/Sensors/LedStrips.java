@@ -25,6 +25,9 @@ public class LedStrips extends SubsystemBase {
     public LedStrips(MyRobot robot) {
         this.robot = robot;
         this.ledStrip = robot.hardwareMap.get(GoBildaPrismDriver.class, "LedStrips");
+        this.solid.setBrightness(50);
+        this.solid.setStartIndex(0);
+        this.solid.setStopIndex(23);
         //this.LightSensorRight = robot.hardwareMap.get(Servo.class, "LightRight");
     }
 
@@ -34,11 +37,17 @@ public class LedStrips extends SubsystemBase {
 
     public void setState(LightIndicatorState state){
         switch (state) {
-            case RED -> {solid.setPrimaryColor(Color.RED);}
-            case GREEN -> {solid.setPrimaryColor(0,100,4);}
-            case PURPLE -> {solid.setPrimaryColor(Color.PURPLE);}
-            case ORANGE -> {solid.setPrimaryColor(Color.ORANGE);}
-            case SCARLETRED -> {solid.setPrimaryColor(255,50,0);}
+            case RED:
+                {solid.setPrimaryColor(Color.RED);}
+            case PURPLE:
+                {solid.setPrimaryColor(Color.PURPLE);}
+            case ORANGE:
+                {solid.setPrimaryColor(Color.ORANGE);}
+            case SCARLETRED:
+                {solid.setPrimaryColor(255,50,0);}
+            case GREEN:
+            default:
+                {solid.setPrimaryColor(0,100,4);}
         }
         ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, solid);
         ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_1, solid);

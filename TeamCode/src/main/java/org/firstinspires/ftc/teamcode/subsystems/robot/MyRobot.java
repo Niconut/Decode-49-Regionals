@@ -151,6 +151,7 @@ public class MyRobot extends Robot {
             scoringGate = new Scoring_Gate(this);
             shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.RED);
             lightIndicator = new Light_Indicator(this);
+            ledStrips = new LedStrips(this);
             register(drive, intakeSubsystem, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
 
             defaultDriveCommand = new DefaultDriveCommand(drive,
@@ -175,9 +176,14 @@ public class MyRobot extends Robot {
                     AutoAimTurretCommand.Team.Red
             );
 
+            ledStripsCommand = new ActuateLedStripsCommand(
+                    ledStrips
+            );
+
             CommandScheduler.getInstance().run();
             CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
             CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
+            CommandScheduler.getInstance().setDefaultCommand(ledStrips, ledStripsCommand);
 
             Button driverIntakeFront = new GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER);
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
@@ -557,6 +563,7 @@ public class MyRobot extends Robot {
             CommandScheduler.getInstance().run();
             CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
             CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
+            CommandScheduler.getInstance().setDefaultCommand(ledStrips, ledStripsCommand);
 
             Button driverIntakeFront = new GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER);
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);

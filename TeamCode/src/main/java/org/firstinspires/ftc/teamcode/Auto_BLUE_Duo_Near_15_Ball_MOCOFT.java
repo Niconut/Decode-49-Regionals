@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Actions.Turret_A
 import org.firstinspires.ftc.teamcode.subsystems.intake.Intake_Actions.Intake_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Gate_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Scoring_Shooter_Action;
+import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Hood_Action;
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
@@ -46,6 +47,7 @@ public class Auto_BLUE_Duo_Near_15_Ball_MOCOFT extends LinearOpMode {
         Shooter_Subsystem_Action shooterSubsystem = new Shooter_Subsystem_Action(hardwareMap, Shooter_Subsystem_Action.Pipeline.BLUE);
         Turret_Analog_Input_Action turretAnalog = new Turret_Analog_Input_Action(hardwareMap);
         Odom_Storage_Action odomStorage = new Odom_Storage_Action(hardwareMap, drive);
+        Shooter_Hood_Action shooterHood = new Shooter_Hood_Action(hardwareMap, Shooter_Hood_Action.Pipeline.BLUE);
 
         shooterSubsystem.setPower(0);
         buildTrajectories(drive, beginPose);
@@ -61,7 +63,7 @@ public class Auto_BLUE_Duo_Near_15_Ball_MOCOFT extends LinearOpMode {
         PostStorage.currentPose = drive.localizer.getPose();
         Actions.runBlocking(
                 new SequentialAction(
-                        scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem, turretAnalog, odomStorage)
+                        scorePreload(scoringShooter, intakeSubsystem, distanceSensor, scoringGate, shooterSubsystem, turretAnalog, odomStorage, shooterHood)
                 )
         );
         PostStorage.currentPose = drive.localizer.getPose();
@@ -134,7 +136,8 @@ public class Auto_BLUE_Duo_Near_15_Ball_MOCOFT extends LinearOpMode {
                                 Scoring_Gate_Action scoringGate,
                                Shooter_Subsystem_Action shooterSubsystem,
                                Turret_Analog_Input_Action turretAnalog,
-                               Odom_Storage_Action odomStorage){
+                               Odom_Storage_Action odomStorage,
+                               Shooter_Hood_Action shooterHood){
 
         return
         new ParallelAction(
@@ -183,7 +186,8 @@ public class Auto_BLUE_Duo_Near_15_Ball_MOCOFT extends LinearOpMode {
 //                    TrajectoryRoute6
                 ),
                 shooterSubsystem.AutoAim(),
-                odomStorage.sendOdomCoords()
+                odomStorage.sendOdomCoords(),
+                shooterHood.AutoHood()
         );
     }
 

@@ -55,7 +55,7 @@ import java.nio.channels.Pipe;
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         odo.setOffsets(-3.75, -3.17, DistanceUnit.INCH);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        if (team == Pipeline.RED) {
+        if (team == Pipeline.BLUE) {
             goal_X = BLUE_GOAL_X;
             goal_Y = BLUE_GOAL_Y;
         }
@@ -76,6 +76,8 @@ import java.nio.channels.Pipe;
 
             hoodRobotPosX = robotPose.getX(DistanceUnit.INCH);
             hoodRobotPosY = robotPose.getY(DistanceUnit.INCH);
+            // * * * * Hood Pos Calculation  * * * *
+            // * * * * * * * * * * * * * * * * * * * * * *
             targetDistance = Math.hypot(goal_X - hoodRobotPosX, goal_Y - hoodRobotPosY);
 
             hoodPos = HOOD_CLOSE_POS + (targetDistance - CLOSE_DISTANCE) * ((HOOD_FAR_POS - HOOD_CLOSE_POS) / (FAR_DISTANCE - CLOSE_DISTANCE));
