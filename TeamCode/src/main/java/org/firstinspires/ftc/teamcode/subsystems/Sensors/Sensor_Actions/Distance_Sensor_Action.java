@@ -29,7 +29,7 @@ public class Distance_Sensor_Action extends SubsystemBase {
     }
 
     public boolean shootSensorTriggered(){
-        if ((shootSensor.getDistance(DistanceUnit.INCH) < 5.00) || elapsedTime.seconds() > 1.5) return true;
+        if ((shootSensor.getDistance(DistanceUnit.INCH) < 5.00) || elapsedTime.seconds() > 1.4) return true;
         else return false;
     }
 

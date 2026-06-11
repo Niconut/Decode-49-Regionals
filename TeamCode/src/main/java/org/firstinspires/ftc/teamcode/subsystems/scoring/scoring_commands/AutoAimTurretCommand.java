@@ -67,7 +67,7 @@ public class AutoAimTurretCommand extends CommandBase {
     public static double MIN_SPEED = 1200;
     public static double MAX_SPEED = 1725;
     public static double FAR_DISTANCE_SPEED = 1560;
-    public static double FAR_DISTANCE_SPEED_BLUE = 1575;
+    public static double FAR_DISTANCE_SPEED_BLUE = 1600;
     public static double FAR_DISTANCE_SPEED_RED = 1600;
     private double targetDistance = 0;
     private double RED_GOAL_X = -55.64;

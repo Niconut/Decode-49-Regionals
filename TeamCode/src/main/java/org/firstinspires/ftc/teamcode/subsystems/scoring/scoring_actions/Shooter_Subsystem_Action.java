@@ -83,7 +83,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 if (team == Pipeline.BLUE) {
                     targettx = 0;
                 } else if (team == Pipeline.RED){
-                    targettx = 1.5;
+                    targettx = -0.5;
                 }
 
                 double error = turretBearing - targettx;

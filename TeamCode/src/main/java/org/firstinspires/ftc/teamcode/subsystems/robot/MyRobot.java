@@ -16,7 +16,6 @@ import com.bylazar.gamepad.GamepadManager;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,9 +23,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Distance_Sensor;
-import org.firstinspires.ftc.teamcode.subsystems.Sensors.LedStrips;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Light_Indicator;
-import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Commands.ActuateLedStripsCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Sensors.Sensor_Commands.ActuateLightIndicatorCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.subsystems.drive.driveCommands.SlowModeCommand;
@@ -65,7 +62,6 @@ public class MyRobot extends Robot {
     public Light_Indicator lightIndicator;
     public Intake_Indexer intakeIndexer;
     public Scoring_Gate scoringGate;
-    public LedStrips ledStrips;
     public GamepadHandling gamepadHandling;
     public GamepadEx driver;
     public GamepadEx operator;
@@ -84,7 +80,6 @@ public class MyRobot extends Robot {
     public SlowModeCommand slowModeCommand;
     public AutoAimTurretCommand autoAimCommand;
     public MoveScoringGateCommand gateCommand;
-    public ActuateLedStripsCommand ledStripsCommand;
 
     public static ElapsedTime shooterTime;
     public static boolean startShooter = true;
@@ -151,7 +146,6 @@ public class MyRobot extends Robot {
             scoringGate = new Scoring_Gate(this);
             shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.RED);
             lightIndicator = new Light_Indicator(this);
-            ledStrips = new LedStrips(this);
             register(drive, intakeSubsystem, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
 
             defaultDriveCommand = new DefaultDriveCommand(drive,
@@ -176,14 +170,9 @@ public class MyRobot extends Robot {
                     AutoAimTurretCommand.Team.Red
             );
 
-            ledStripsCommand = new ActuateLedStripsCommand(
-                    ledStrips
-            );
-
             CommandScheduler.getInstance().run();
             CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
             CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
-            CommandScheduler.getInstance().setDefaultCommand(ledStrips, ledStripsCommand);
 
             Button driverIntakeFront = new GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER);
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);
@@ -522,7 +511,7 @@ public class MyRobot extends Robot {
             );
         }
         else if (mode == TeleOpMode.BLUE){
-            targetAngle = -1.5;
+            targetAngle = 0;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, PostStorage.currentPose);
             endgameKickstand = new Endgame_Kickstand(this);
@@ -531,7 +520,6 @@ public class MyRobot extends Robot {
             scoringGate = new Scoring_Gate(this);
             shooterSubsystem = new Shooter_Subsystem(this, Shooter_Subsystem.Team.BLUE);
             lightIndicator = new Light_Indicator(this);
-            ledStrips = new LedStrips(this);
             register(drive, intakeSubsystem, lightIndicator, distanceSensor, scoringGate, shooterSubsystem);
 
             defaultDriveCommand = new DefaultDriveCommand(drive,
@@ -556,14 +544,10 @@ public class MyRobot extends Robot {
                     AutoAimTurretCommand.Team.Blue
             );
 
-            ledStripsCommand = new ActuateLedStripsCommand(
-                    ledStrips
-            );
 
             CommandScheduler.getInstance().run();
             CommandScheduler.getInstance().setDefaultCommand(drive, defaultDriveCommand);
             CommandScheduler.getInstance().setDefaultCommand(shooterSubsystem, autoAimCommand);
-            CommandScheduler.getInstance().setDefaultCommand(ledStrips, ledStripsCommand);
 
             Button driverIntakeFront = new GamepadButton(driver, GamepadKeys.Button.LEFT_BUMPER);
             Button driveSpeedButton = new GamepadButton(driver, GamepadKeys.Button.RIGHT_BUMPER);

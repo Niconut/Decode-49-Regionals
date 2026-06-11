@@ -4,8 +4,8 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 public class Constants {
     public static class FinalAutoTrajectories {
-        public static final Vector2d robotEndPosBlue_B = new Vector2d(-34,-16);
-        public static final Vector2d robotEndPosRed_B = new Vector2d(-34,16);
+        public static final Vector2d robotEndPosBlue_B = new Vector2d(-34,-13);
+        public static final Vector2d robotEndPosRed_B = new Vector2d(-34,13);
         public static final Vector2d robotEndPosBlue_A = new Vector2d(64,64);
         public static final Vector2d robotEndPosRed_A = new Vector2d(64,-64);
         public static final Vector2d robotEndPosBlue_Y = new Vector2d(64,0);

@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Configurable
 public class Scoring_Shooter_Action {
     public DcMotorEx ScoringShooter;
-    public static double SHOOT = 1420;
+    public static double SHOOT = 1360;
     public static double SECONDSHOOT = 1300;
     public static double FAR = 1675;
     public static double FARTHER = 1650;
