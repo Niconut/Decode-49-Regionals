@@ -106,10 +106,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
                 totalTurretAngle = (totalEncoderAngle / GEAR_RATIO);
 
                 //kp * error;
-                if ((totalTurretAngle > 0.3 && power > 0) || (totalTurretAngle < -0.3 && power < 0)){
-                    servoTurret.setPower(0);
-                }else{
-                    servoTurret.setPower(power);
+                if (team == Pipeline.RED) {
+                    if ((totalTurretAngle > 0.3 && power > 0) || (totalTurretAngle < -0.3 && power < 0)) {
+                        servoTurret.setPower(0);
+                    } else {
+                        servoTurret.setPower(power);
+                    }
+                } else if (team == Pipeline.BLUE){
+                    if ((totalTurretAngle > 0.5 && power > 0) || (totalTurretAngle < -0.5 && power < 0)) {
+                        servoTurret.setPower(0);
+                    } else {
+                        servoTurret.setPower(power);
+                    }
                 }
             }
             return true;
