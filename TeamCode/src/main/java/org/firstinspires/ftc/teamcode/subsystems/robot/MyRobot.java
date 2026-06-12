@@ -212,6 +212,7 @@ public class MyRobot extends Robot {
                     )
             );
 
+
             Button intakeFront = new GamepadButton(operator, GamepadKeys.Button.DPAD_UP);
             Button intakeBack = new GamepadButton(operator, GamepadKeys.Button.DPAD_DOWN);
             Button intakeShoot1 = new GamepadButton(operator, GamepadKeys.Button.RIGHT_BUMPER);
@@ -343,40 +344,19 @@ public class MyRobot extends Robot {
                     new ParallelCommandGroup(
                             new SequentialCommandGroup(
                                     new InstantCommand(()-> telemetry.clearAll()),
-                                    new InstantCommand(()-> telemetry.addLine("Driver Shooting")),
+                                    new InstantCommand(()-> telemetry.addLine("Close Range Shooting")),
                                     new InstantCommand(()-> telemetry.update())
                             ),
                             new SequentialCommandGroup(
-                                    new InstantCommand(()-> {
-                                        turretProp = shooterSubsystem.detectAprilTag();
-                                        turretBearing = (turretProp[0]);
-                                        turretRange = (turretProp[1]);
+                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
+                                    new WaitCommand(CLOSE_SHOOT_GATE_OPEN_DELAY),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
+                                    new WaitCommand(CLOSE_SHOOT_FIRST_BALL_DELAY),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.CLOSESHOOT_SHOOT_SHOOT),
+                                    new WaitCommand(2000),
+                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
 
-                                        if (Math.abs(turretBearing) != 0) {
-                                            if (turretRange > SHOOTING_DISTANCE_THRESHOLD) {
-                                                new SequentialCommandGroup(
-                                                        new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
-                                                        new WaitCommand(FAR_SHOOT_GATE_OPEN_DELAY),
-                                                        new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
-                                                        new WaitCommand(FAR_SHOOT_FIRST_BALL_DELAY),
-                                                        new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.HALFSHOOT_SHOOT_SHOOT),
-                                                        new WaitCommand(2000),
-                                                        new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
-                                                );
-                                            }
-                                        } else{
-                                            new SequentialCommandGroup(
-                                                    new MoveScoringGateCommand(scoringGate, Scoring_Gate.ScoringGState.OPEN),
-                                                    new WaitCommand(CLOSE_SHOOT_GATE_OPEN_DELAY),
-                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.OFF_SLOWFORWARD_REVERSE),
-                                                    new WaitCommand(CLOSE_SHOOT_FIRST_BALL_DELAY),
-                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.THREE_QUARTERS_SHOOT),
-                                                    new WaitCommand(2000),
-                                                    new SpinIntakeSubsystemCommand(intakeSubsystem, Intake_Subsystem.IntakeSubsystemState.INIT)
-                                            );
-                                        }
-                                    }
-                                    )
+
                             )
                     )
             );

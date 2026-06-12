@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
 @Configurable
-@Autonomous (name = "RED Solo Near 18?????????", group = "Red Alliance")
+@Autonomous (name = "RED Solo Near 18", group = "Red Alliance")
 public class Auto_RED_Solo_Near_18_SOM extends LinearOpMode {
 
     private MecanumDrive drive;
@@ -104,7 +104,7 @@ public class Auto_RED_Solo_Near_18_SOM extends LinearOpMode {
         TrajectoryActionBuilder trajectoryGateBackUp = trajectoryFrontPickUp.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
 //                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToLinearHeading(new Pose2d(16, 72, Math.toRadians(127)), Math.toRadians(90), new TranslationalVelConstraint(70));
+                .splineToLinearHeading(new Pose2d(17, 67, Math.toRadians(124)), Math.toRadians(90), new TranslationalVelConstraint(50));
 
         TrajectoryActionBuilder trajectoryShootBalls3 = trajectoryGateBackUp.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
@@ -115,7 +115,7 @@ public class Auto_RED_Solo_Near_18_SOM extends LinearOpMode {
         TrajectoryActionBuilder trajectoryGateBackUp2 = trajectoryShootBalls3.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
 //                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToLinearHeading(new Pose2d(16, 72, Math.toRadians(127)), Math.toRadians(90), new TranslationalVelConstraint(70));
+                .splineToLinearHeading(new Pose2d(17, 67, Math.toRadians(124)), Math.toRadians(90), new TranslationalVelConstraint(50));
 
         TrajectoryActionBuilder trajectoryShootBalls4 = trajectoryGateBackUp2.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))

@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
 @Configurable
-@Autonomous (name = "BLUE Solo Near 18?????????", group = "Blue Alliance")
+@Autonomous (name = "BLUE Solo Near 18", group = "Blue Alliance")
 public class Auto_BLUE_Solo_Near_18_SOM extends LinearOpMode {
 
     private MecanumDrive drive;
@@ -104,7 +104,7 @@ public class Auto_BLUE_Solo_Near_18_SOM extends LinearOpMode {
         TrajectoryActionBuilder trajectoryGateBackUp = trajectoryFrontPickUp.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
 //                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToLinearHeading(new Pose2d(12, -72, Math.toRadians(-127)), Math.toRadians(-90), new TranslationalVelConstraint(70));
+                .splineToLinearHeading(new Pose2d(15, -68, Math.toRadians(-124)), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryShootBalls3 = trajectoryGateBackUp.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
@@ -115,7 +115,7 @@ public class Auto_BLUE_Solo_Near_18_SOM extends LinearOpMode {
         TrajectoryActionBuilder trajectoryGateBackUp2 = trajectoryShootBalls3.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
 //                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToLinearHeading(new Pose2d(13, -72, Math.toRadians(-127)), Math.toRadians(-90), new TranslationalVelConstraint(70));
+                .splineToLinearHeading(new Pose2d(15, -68, Math.toRadians(-124)), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryShootBalls4 = trajectoryGateBackUp2.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
@@ -182,7 +182,7 @@ public class Auto_BLUE_Solo_Near_18_SOM extends LinearOpMode {
                             scoringGate.OpenGate(),
                             new SleepAction(0.2),
                             SHOOT_REAR_MID_FRONT(intakeSubsystem),
-                            new SleepAction(0.6),
+                            new SleepAction(0.7),
                             scoringGate.CloseGate(),
                             new ParallelAction(
                                 TrajectoryFrontPickUp,

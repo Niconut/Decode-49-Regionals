@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystems.Constants;
@@ -25,6 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter_Subsystem_Action;
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
+@Disabled
 @Configurable
 @Autonomous (name = "BLUE Solo Near 18?", group = "Blue Alliance")
 public class Auto_BLUE_Solo_Near_18_Ball extends LinearOpMode {
