@@ -104,7 +104,7 @@ public class Auto_BLUE_Solo_Near_18_SOM extends LinearOpMode {
         TrajectoryActionBuilder trajectoryGateBackUp = trajectoryFrontPickUp.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
 //                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToLinearHeading(new Pose2d(15, -68, Math.toRadians(-124)), Math.toRadians(-90), new TranslationalVelConstraint(70));
+                .splineToLinearHeading(new Pose2d(13, -68, Math.toRadians(-124)), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryShootBalls3 = trajectoryGateBackUp.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
@@ -115,7 +115,7 @@ public class Auto_BLUE_Solo_Near_18_SOM extends LinearOpMode {
         TrajectoryActionBuilder trajectoryGateBackUp2 = trajectoryShootBalls3.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(-0, -28), Math.toRadians(0), new TranslationalVelConstraint(70))
 //                .splineToConstantHeading(new Vector2d(7,-55), Math.toRadians(-90), new TranslationalVelConstraint(40))
-                .splineToLinearHeading(new Pose2d(15, -68, Math.toRadians(-124)), Math.toRadians(-90), new TranslationalVelConstraint(70));
+                .splineToLinearHeading(new Pose2d(13, -68, Math.toRadians(-124)), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryShootBalls4 = trajectoryGateBackUp2.endTrajectory().fresh()
 //                .splineToConstantHeading(new Vector2d(10,-50), Math.toRadians(90))
@@ -124,9 +124,9 @@ public class Auto_BLUE_Solo_Near_18_SOM extends LinearOpMode {
 //                .strafeToLinearHeading(new Vector2d(-6,-20), Math.toRadians(-90), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryBackPickUp = trajectoryShootBalls4.endTrajectory().fresh()
-                .splineToConstantHeading(new Vector2d(30, -30), Math.toRadians(-90), new TranslationalVelConstraint(30))
+                .splineToConstantHeading(new Vector2d(27, -30), Math.toRadians(-90), new TranslationalVelConstraint(30))
                 .lineToY(-58, new TranslationalVelConstraint(40))
-                .splineToConstantHeading(new Vector2d(30,-46), Math.toRadians(90), new TranslationalVelConstraint(70))
+                .splineToConstantHeading(new Vector2d(27,-46), Math.toRadians(90), new TranslationalVelConstraint(70))
                 .splineToConstantHeading(Constants.FinalAutoTrajectories.robotEndPosBlue_B, Math.toRadians(-180), new TranslationalVelConstraint(70));
 
         TrajectoryActionBuilder trajectoryPark = trajectoryBackPickUp.endTrajectory().fresh()

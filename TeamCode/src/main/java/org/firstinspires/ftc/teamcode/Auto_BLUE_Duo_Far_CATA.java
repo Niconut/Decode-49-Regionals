@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.subsystems.scoring.scoring_actions.Shooter
 import org.firstinspires.ftc.teamcode.teamcode.MecanumDrive;
 
 @Configurable
-@Autonomous (name = "BLUE Duo Far F5H", group = "Blue Alliance")
-public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
+@Autonomous (name = "BLUE Duo Far 5H", group = "Blue Alliance")
+public class Auto_BLUE_Duo_Far_CATA extends LinearOpMode {
 
     private MecanumDrive drive;
     Action
@@ -66,14 +66,8 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
 
     private void buildTrajectories(MecanumDrive drive, Pose2d beginPose){
 
-        TrajectoryActionBuilder trajectoryFarSpikePickUp = drive.actionBuilder(beginPose) // FAR
-                .splineToConstantHeading(new Vector2d(36, -30), Math.toRadians(-90))
-                .lineToY(-56)
-                .splineToConstantHeading(new Vector2d(36,-46), Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(56, -16), Math.toRadians(0));
 
-        TrajectoryActionBuilder trajectoryHumanPickUp1 = trajectoryFarSpikePickUp.endTrajectory().fresh() // HUMAN PLAYER
-                .setReversed(false)
+        TrajectoryActionBuilder trajectoryHumanPickUp1 = drive.actionBuilder(beginPose)
                 .splineToConstantHeading(new Vector2d(68,-62), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(66,-50), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(60,-64), Math.toRadians(-90))
@@ -107,7 +101,6 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
         TrajectoryHumanPickup3 = trajectoryHumanPickup3.build();
         TrajectoryHumanPickup2 = trajectoryHumanPickup2.build();
         TrajectoryHumanPickUp1 = trajectoryHumanPickUp1.build();
-        TrajectoryFarSpikePickUp = trajectoryFarSpikePickUp.build();
         TrajectoryPark = trajectoryPark.build();
     }
 
@@ -136,20 +129,6 @@ public class Auto_BLUE_Duo_Far_FHHHHH extends LinearOpMode {
                         new SleepAction(1),
                         scoringGate.CloseGate(),
                         scoringShooter.FartherShooter(),
-
-                        // pickup furthest spike mark and go to shooting zone
-                        new ParallelAction(
-                            TrajectoryFarSpikePickUp,
-                            SLOW_INTAKE(intakeSubsystem, distanceSensor)
-                        ),
-
-                        // shoot
-//                        new SleepAction(0.1),
-                        scoringGate.OpenGate(),
-                        new SleepAction(0.35),
-                        FAR_SHOOT(intakeSubsystem),
-                        new SleepAction(1),
-                        scoringGate.CloseGate(),
 
                         // pickup from human player then go to shooting zone
                         new ParallelAction(

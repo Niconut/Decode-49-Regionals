@@ -68,7 +68,7 @@ public class Auto_RED_Duo_Far_FHHHHH extends LinearOpMode {
 
         TrajectoryActionBuilder trajectoryFarSpikePickUp = drive.actionBuilder(beginPose) // FAR
                 .splineToConstantHeading(new Vector2d(36, 30), Math.toRadians(90))
-                .lineToY(60)
+                .lineToY(56)
                 .splineToConstantHeading(new Vector2d(36,46), Math.toRadians(-90))
                 .splineToConstantHeading(new Vector2d(56, 16), Math.toRadians(0));
 

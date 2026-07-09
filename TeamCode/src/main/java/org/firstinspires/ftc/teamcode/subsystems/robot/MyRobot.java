@@ -137,7 +137,7 @@ public class MyRobot extends Robot {
 //        MyRobot.enable();
 
         if (mode == TeleOpMode.RED){
-            targetAngle = -0.5;
+            targetAngle = -1;
             shooterTime = new ElapsedTime();
             drive = new driveSubsystem(hardwareMap, new Pose2d(0, 0, 0));
             endgameKickstand = new Endgame_Kickstand(this);
